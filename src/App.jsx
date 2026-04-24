@@ -1,4 +1,3 @@
-import { GlassFilters } from './components/LiquidGlass'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Work from './components/Work'
@@ -7,8 +6,7 @@ import './index.css'
 
 export default function App() {
   return (
-    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
-      <GlassFilters />
+    <div style={{ minHeight: '100vh' }}>
       <Navbar />
       <Hero />
       <Work />

@@ -1,5 +1,3 @@
-import LiquidGlass from './LiquidGlass'
-
 function ChevronDown() {
   return (
     <svg width="8" height="5" viewBox="0 0 10 6" fill="none" style={{ flexShrink: 0 }}>
@@ -8,7 +6,15 @@ function ChevronDown() {
   )
 }
 
-const labelStyle = {
+const pill = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '10px 20px',
+  borderRadius: '999px',
+  background: '#ffffff',
+  border: '1px solid #ECECEC',
+  cursor: 'pointer',
   fontSize: '16px',
   lineHeight: '20px',
   color: '#171717',
@@ -18,12 +24,7 @@ const labelStyle = {
 
 export default function Navbar() {
   return (
-    <nav style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      paddingBlock: '20px',
-    }}>
+    <nav style={{ position: 'sticky', top: 0, zIndex: 100, paddingBlock: '20px' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -33,34 +34,12 @@ export default function Navbar() {
         paddingInline: '96px',
       }}>
 
-        {/* Brand */}
-        <LiquidGlass>
-          <div style={{ paddingInline: '20px', paddingBlock: '10px', paddingBottom: '12px', ...labelStyle }}>
-            Robert P
-          </div>
-        </LiquidGlass>
+        <div style={pill}>Robert P</div>
 
-        {/* Nav links */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <LiquidGlass>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingInline: '20px', paddingBlock: '10px', paddingBottom: '12px' }}>
-              <span style={labelStyle}>Work</span>
-              <span style={{ ...labelStyle, fontSize: '12px' }}><ChevronDown /></span>
-            </div>
-          </LiquidGlass>
-
-          <LiquidGlass>
-            <div style={{ paddingInline: '20px', paddingBlock: '10px', paddingBottom: '12px', ...labelStyle }}>
-              About
-            </div>
-          </LiquidGlass>
-
-          <LiquidGlass>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingInline: '20px', paddingBlock: '10px', paddingBottom: '12px' }}>
-              <span style={labelStyle}>Contact</span>
-              <span style={{ ...labelStyle, fontSize: '12px' }}><ChevronDown /></span>
-            </div>
-          </LiquidGlass>
+          <div style={pill}>Work <ChevronDown /></div>
+          <div style={pill}>About</div>
+          <div style={pill}>Contact <ChevronDown /></div>
         </div>
 
       </div>

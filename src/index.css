@@ -8,7 +8,9 @@
 
 body {
   margin: 0;
-  background: #fff;
+  /* Off-white with very faint blue undertone — makes glass refraction visible */
+  background: #ffffff;
+  min-height: 100vh;
   font-family: 'Geist', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
