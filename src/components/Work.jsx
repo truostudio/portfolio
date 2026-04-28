@@ -127,11 +127,11 @@ function PhoneFrame({ bg, accent, title }) {
 
 function GridCard({ bg, accent, title, onClick }) {
   const [hovered, setHovered] = useState(false)
-  const { isMobile } = useBreakpoint()
+  const { isTablet } = useBreakpoint()
 
   return (
     <div
-      style={{ ...cardBase, height: isMobile ? '300px' : '454px', cursor: 'pointer' }}
+      style={{ ...cardBase, height: isTablet ? '300px' : '454px', cursor: 'pointer' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onClick}
@@ -244,9 +244,9 @@ function Modal({ project, onClose }) {
 
 export default function Work() {
   const [activeModal, setActiveModal] = useState(null)
-  const { isMobile, isTablet, width } = useBreakpoint()
+  const { isTablet, width } = useBreakpoint()
 
-  const gap = isMobile ? '16px' : '48px'
+  const gap = isTablet ? '16px' : '48px'
   const gridCols3 = width < 640 ? '1fr' : width < 1100 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'
 
   return (
@@ -262,15 +262,15 @@ export default function Work() {
         }
       `}</style>
 
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isTablet ? '16px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap, maxWidth: '1496px', marginInline: 'auto' }}>
 
           {/* Row 1 — two phone cards */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap }}>
-            <div style={{ ...cardBase, flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, aspectRatio: '724 / 840' }}>
+          <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
+            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
               <PhoneFrame {...projects[0]} />
             </div>
-            <div style={{ ...cardBase, flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, aspectRatio: '724 / 840' }}>
+            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
               <PhoneFrame {...projects[1]} />
             </div>
           </div>
@@ -283,18 +283,18 @@ export default function Work() {
           </div>
 
           {/* Row 3 — two more phone cards */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap }}>
-            <div style={{ ...cardBase, flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, aspectRatio: '724 / 840' }}>
+          <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
+            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
               <PhoneFrame {...projects[3]} />
             </div>
-            <div style={{ ...cardBase, flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined, aspectRatio: '724 / 840' }}>
+            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
               <PhoneFrame {...projects[4]} />
             </div>
           </div>
 
           {/* Row 4 — wide card + square */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap }}>
-            <div style={{ ...cardBase, gridColumn: isMobile ? 'auto' : 'span 2', aspectRatio: isMobile ? '16 / 9' : '2.107 / 1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isTablet ? '1fr' : 'repeat(3, 1fr)', gap }}>
+            <div style={{ ...cardBase, gridColumn: isTablet ? 'auto' : 'span 2', aspectRatio: isTablet ? '16 / 9' : '2.107 / 1' }}>
               <ProjectCardWide {...projects[0]} />
             </div>
             <div style={{ ...cardBase, aspectRatio: '1 / 1' }}>

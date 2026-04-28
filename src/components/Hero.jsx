@@ -62,7 +62,7 @@ const glassPill = {
 }
 
 export default function Hero() {
-  const { isMobile } = useBreakpoint()
+  const { isMobile, isTablet } = useBreakpoint()
   const [sparkle, setSparkle]       = useState(0.5)
   const [choppy,  setChoppy]        = useState(0.5)
   const [sliderOpen, setSliderOpen] = useState(false)
@@ -165,13 +165,13 @@ export default function Hero() {
           border: none;
         }
       `}</style>
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '16px' : '48px', maxWidth: '1496px', marginInline: 'auto' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isTablet ? '16px' : '48px' }}>
+        <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: isTablet ? '16px' : '48px', maxWidth: '1496px', marginInline: 'auto' }}>
 
           {/* Left — water shader card */}
           <div style={{
-            flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined,
-            height: isMobile ? '480px' : '640px', borderRadius: isMobile ? '32px' : '48px',
+            flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined,
+            height: isTablet ? '480px' : '640px', borderRadius: isTablet ? '32px' : '48px',
             backgroundColor: '#004C63', overflow: 'clip', position: 'relative',
           }}>
             <WaterShader sparkle={sparkle} choppy={choppy} />
@@ -185,7 +185,7 @@ export default function Hero() {
               onMouseLeave={() => { if (!sliderOpen) setPillAnim('out') }}
               style={{
                 ...glassPill,
-                position: 'absolute', top: isMobile ? '20px' : '36px', right: isMobile ? '20px' : '36px',
+                position: 'absolute', top: isTablet ? '20px' : '36px', right: isTablet ? '20px' : '36px',
                 zIndex: 1,
                 height: 48,
                 width: sliderOpen ? 240 : 48,
@@ -257,7 +257,7 @@ export default function Hero() {
             </div>
 
             {/* Bio overlay */}
-            <div style={{ position: 'absolute', bottom: isMobile ? '20px' : '36px', left: isMobile ? '20px' : '36px', right: isMobile ? '20px' : '36px', zIndex: 1 }}>
+            <div style={{ position: 'absolute', bottom: isTablet ? '20px' : '36px', left: isTablet ? '20px' : '36px', right: isTablet ? '20px' : '36px', zIndex: 1 }}>
               <div style={{
                 borderRadius: '20px',
                 backdropFilter: 'blur(6px) saturate(1.0)',
@@ -265,10 +265,10 @@ export default function Hero() {
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.18)',
                 boxShadow: 'rgba(255,255,255,0.12) 0px 1px 0px inset, rgba(0,0,0,0.10) 0px 8px 32px',
-                padding: isMobile ? '20px' : '28px',
-                display: 'flex', flexDirection: 'column', gap: isMobile ? '36px' : '48px',
+                padding: isTablet ? '20px' : '28px',
+                display: 'flex', flexDirection: 'column', gap: isTablet ? '36px' : '48px',
               }}>
-                <p style={{ color: '#FFABDC', fontSize: isMobile ? '22px' : '24px', lineHeight: '1.4', margin: 0, paddingRight: isMobile ? '0' : '80px', fontWeight: '500', letterSpacing: '-1px' }}>
+                <p style={{ color: '#FFABDC', fontSize: isTablet ? '22px' : '24px', lineHeight: '1.4', margin: 0, paddingRight: isTablet ? '0' : '80px', fontWeight: '500', letterSpacing: '-1px' }}>
                   Robert is a product designer <span style={{ whiteSpace: 'nowrap' }}>based in Toronto, Canada.</span>
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -280,7 +280,7 @@ export default function Hero() {
           </div>
 
           {/* Right — photo card with Bayer dither on hover */}
-          {!isMobile && (
+          {!isTablet && (
             <div
               style={{
                 flex: 1,

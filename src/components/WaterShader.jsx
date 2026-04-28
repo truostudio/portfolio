@@ -299,7 +299,8 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
     const uStarTime  = gl.getUniformLocation(starProg,  'u_time')
 
     const start = performance.now()
-    let raf
+    const FRAME_MS = 1000 / 60
+    let raf, lastFrame = 0
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1
@@ -314,7 +315,10 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
     ro.observe(canvas)
     resize()
 
-    const render = () => {
+    const render = (now) => {
+      raf = requestAnimationFrame(render)
+      if (now - lastFrame < FRAME_MS) return
+      lastFrame = now
       const t = (performance.now() - start) / 1000
       const w = canvas.width, h = canvas.height
 
@@ -339,9 +343,8 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
       gl.uniform1f(uStarTime, t)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
 
-      raf = requestAnimationFrame(render)
     }
-    render()
+    raf = requestAnimationFrame(render)
 
     return () => { cancelAnimationFrame(raf); ro.disconnect() }
   }, [])

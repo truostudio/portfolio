@@ -27,17 +27,17 @@ const pill = {
 }
 
 export default function Navbar() {
-  const { isMobile } = useBreakpoint()
-  const pillStyle = { ...pill, fontWeight: isMobile ? '700' : '500', padding: isMobile ? '10px 14px' : '10px 20px', fontSize: isMobile ? '14px' : '16px' }
+  const { isTablet } = useBreakpoint()
+  const pillStyle = { ...pill, fontWeight: isTablet ? '700' : '500', padding: isTablet ? '10px 14px' : '10px 20px', fontSize: isTablet ? '14px' : '16px' }
   return (
-    <nav style={{ paddingBlock: isMobile ? '24px' : '48px' }}>
+    <nav style={{ paddingBlock: isTablet ? '24px' : '48px' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         maxWidth: '1554px',
         marginInline: 'auto',
-        paddingInline: isMobile ? '20px' : '96px',
+        paddingInline: isTablet ? '20px' : '96px',
       }}>
 
         <div style={pillStyle}>Robert P</div>
