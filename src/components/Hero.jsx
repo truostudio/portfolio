@@ -285,7 +285,7 @@ export default function Hero() {
             onMouseEnter={() => setPhotoHovered(true)}
             onMouseLeave={() => setPhotoHovered(false)}
           >
-            <PhotoDither hovered={photoHovered} src="/photo.png" />
+            <PhotoDither hovered={photoHovered} src="/photo.jpg" />
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
