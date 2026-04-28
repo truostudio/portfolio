@@ -14,20 +14,21 @@ const OCEAN_FRAG = `
   precision highp float;
   uniform vec2  u_res;
   uniform float u_time;
+  uniform float u_choppy;
 
   const int   NUM_STEPS = 8;
   const float PI        = 3.141592;
   const float EPSILON   = 1e-3;
   #define EPSILON_NRM (0.1 / u_res.x)
 
-  const int   ITER_GEOMETRY = 3;
-  const int   ITER_FRAGMENT = 5;
+  const int   ITER_GEOMETRY = 5;
+  const int   ITER_FRAGMENT = 7;
   const float SEA_HEIGHT    = 0.6;
-  const float SEA_CHOPPY    = 5.0;
-  const float SEA_SPEED     = 0.25;
+  // SEA_CHOPPY driven by u_choppy uniform (slider 0→1 maps to 1→9, default 5)
+  const float SEA_SPEED     = 0.96;
   const float SEA_FREQ      = 0.16;
-  const vec3  SEA_BASE        = vec3(0.0, 0.22, 0.38);
-  const vec3  SEA_WATER_COLOR = vec3(0.10, 0.92, 0.98) * 0.80;
+  const vec3  SEA_BASE        = vec3(0.02, 0.32, 0.52);
+  const vec3  SEA_WATER_COLOR = vec3(0.08, 0.88, 0.98) * 0.92;
   #define SEA_TIME (1.0 + u_time * SEA_SPEED)
   const mat2 octave_m = mat2(1.6, 1.2, -1.2, 1.6);
 
@@ -54,7 +55,7 @@ const OCEAN_FRAG = `
   }
   vec3 getSkyColor(vec3 e){
     e.y=(max(e.y,0.0)*0.8+0.2)*0.8;
-    return vec3(pow(1.0-e.y,2.0)*0.4,(1.0-e.y)*0.6,0.7+(1.0-e.y)*0.3)*0.9;
+    return vec3(pow(1.0-e.y,2.0)*0.32,(1.0-e.y)*0.62,0.78+(1.0-e.y)*0.22)*0.95;
   }
   float sea_octave(vec2 uv,float choppy){
     uv+=noise(uv);
@@ -63,7 +64,7 @@ const OCEAN_FRAG = `
     return pow(1.0-pow(wv.x*wv.y,0.65),choppy);
   }
   float map(vec3 p){
-    float freq=SEA_FREQ,amp=SEA_HEIGHT,choppy=SEA_CHOPPY;
+    float freq=SEA_FREQ,amp=SEA_HEIGHT,choppy=u_choppy;
     vec2 uv=p.xz; uv.x*=0.75;
     float d,h=0.0;
     for(int i=0;i<ITER_GEOMETRY;i++){
@@ -73,7 +74,7 @@ const OCEAN_FRAG = `
     return p.y-h;
   }
   float map_detailed(vec3 p){
-    float freq=SEA_FREQ,amp=SEA_HEIGHT,choppy=SEA_CHOPPY;
+    float freq=SEA_FREQ,amp=SEA_HEIGHT,choppy=u_choppy;
     vec2 uv=p.xz; uv.x*=0.75;
     float d,h=0.0;
     for(int i=0;i<ITER_FRAGMENT;i++){
@@ -90,7 +91,7 @@ const OCEAN_FRAG = `
     vec3 color=mix(refracted,reflected,fresnel);
     float atten=max(1.0-dot(dist,dist)*0.001,0.0);
     color+=SEA_WATER_COLOR*(p.y-SEA_HEIGHT)*0.18*atten;
-    color+=specular(n,l,eye,500.0*inversesqrt(dot(dist,dist)));
+    color+=specular(n,l,eye,500.0*inversesqrt(dot(dist,dist)))*1.2;
     return color;
   }
   vec3 getNormal(vec3 p,float eps){
@@ -119,8 +120,8 @@ const OCEAN_FRAG = `
 
     // Camera: fully fixed, top-down tilt
     vec3 ang = vec3(0.0, 0.75, 0.0);
-    vec3 ori = vec3(0.0, 4.5, 0.0);
-    vec3 dir = normalize(vec3(uv.xy, -3.5));
+    vec3 ori = vec3(0.0, 2.8, 0.0);
+    vec3 dir = normalize(vec3(uv.xy, -5.0));
     dir.z += length(uv)*0.08;
     dir = normalize(dir) * fromEuler(ang);
 
@@ -128,7 +129,7 @@ const OCEAN_FRAG = `
     heightMapTracing(ori, dir, p);
     vec3 dist  = p - ori;
     vec3 n     = getNormal(p, dot(dist,dist)*EPSILON_NRM);
-    vec3 light = normalize(vec3(0.0, 1.0, 0.8));
+    vec3 light = normalize(vec3(0.4, 1.0, 0.0));
 
     vec3 color = mix(
       getSkyColor(dir),
@@ -139,7 +140,7 @@ const OCEAN_FRAG = `
   }
 `
 
-// ── Pass 2: star filter ───────────────────────────────────────────────────────
+// ── Pass 2: anime sparkle overlay ────────────────────────────────────────────
 const STAR_FRAG = `
   precision highp float;
   uniform sampler2D u_tex;
@@ -147,51 +148,89 @@ const STAR_FRAG = `
   uniform float     u_sparkle;
   uniform float     u_time;
 
-  const int N = 16;
-
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
   }
+  float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
 
-  // Returns contribution from only the FIRST qualifying pixel along this arm.
-  // One bright pixel = one fixed-brightness arm. Threshold controls quantity, not brightness.
-  vec3 arm(vec2 uv, vec2 dir, float thresh) {
-    vec3  result = vec3(0.0);
-    float found  = 0.0;
-    for (int i = 1; i <= N; i++) {
-      float t   = float(i) / float(N);
-      vec3  s   = texture2D(u_tex, uv + dir * t).rgb;
-      float lum = dot(s, vec3(0.299, 0.587, 0.114));
-      float q   = step(thresh, lum) * (1.0 - min(found, 1.0));
-      result   += s * q * pow(1.0 - t, 1.5);
-      found    += q;
-    }
-    return result;
+  // ✦ shape: 4 long cardinal spikes + 4 shorter diagonal spikes + soft bloom.
+  // delta is offset in pixels from the sparkle center.
+  float sparkleShape(vec2 delta, float size) {
+    float r     = length(delta);
+    float theta = atan(delta.y, delta.x);
+
+    float arms4     = pow(abs(cos(2.0 * theta)), 16.0);
+    float spike     = arms4 * size / (r + size * 0.06);
+
+    float arms4d    = pow(abs(sin(2.0 * theta)), 16.0);
+    float spikeDiag = arms4d * (size * 0.38) / (r + size * 0.10);
+
+    float bloom = size * 0.22 / (r + size * 0.07);
+    bloom *= bloom;
+
+    return (spike + spikeDiag + bloom) * smoothstep(size * 2.4, 0.0, r);
   }
 
   void main() {
-    vec2  uv    = gl_FragCoord.xy / u_res;
-    vec3  scene = texture2D(u_tex, uv).rgb;
+    vec2 uv    = gl_FragCoord.xy / u_res;
+    vec3 scene = texture2D(u_tex, uv).rgb;
 
-    // Sparkles — slider only moves threshold, arm length and intensity are fixed
-    float thresh = mix(0.55, 0.18, u_sparkle);
-    // Diagonal arms → ✦ shape. 0.707 normalises the diagonal step length.
-    float s = 0.07 * 0.707 / float(N);
+    // Cell grid: one random candidate sparkle point per cell.
+    // 5x5 neighborhood ensures arms up to 2*cellPx reach current pixel.
+    float cellPx = 18.0;
+    vec2  cell   = floor(gl_FragCoord.xy / cellPx);
+    float thresh = mix(0.84, 0.64, u_sparkle);
 
-    vec3 star = arm(uv, vec2( s,  s), thresh)
-              + arm(uv, vec2(-s,  s), thresh)
-              + arm(uv, vec2( s, -s), thresh)
-              + arm(uv, vec2(-s, -s), thresh);
+    vec3 glow = vec3(0.0);
 
-    scene = min(scene + star * 4.0, 1.0);
+    for (int cx = -2; cx <= 2; cx++) {
+      for (int cy = -2; cy <= 2; cy++) {
+        vec2 c = cell + vec2(float(cx), float(cy));
 
-    // Film grain
-    float g1 = hash(floor(uv * u_res * 0.55) + fract(u_time * 37.0));
-    float g2 = hash(floor(uv * u_res * 0.40) + fract(u_time * 73.0));
-    float grain = (g1 + g2) * 0.5 - 0.5;
-    scene += grain * 0.48;
+        // Jitter candidate within its cell
+        vec2 jitter      = vec2(hash(c), hash(c + vec2(17.3, 41.7)));
+        vec2 candPx      = (c + jitter) * cellPx;
+        vec2 candUV      = candPx / u_res;
 
-    gl_FragColor = vec4(clamp(scene, 0.0, 1.0), 1.0);
+        if (candUV.x < 0.01 || candUV.x > 0.99 ||
+            candUV.y < 0.01 || candUV.y > 0.99) continue;
+
+        // Brightness check
+        float cl = luma(texture2D(u_tex, candUV).rgb);
+        if (cl < thresh) continue;
+
+        // Local contrast: must be a peak, not a broad reflection
+        vec2  px  = 5.0 / u_res;
+        float avg = (luma(texture2D(u_tex, candUV + vec2( px.x, 0.0)).rgb)
+                   + luma(texture2D(u_tex, candUV - vec2( px.x, 0.0)).rgb)
+                   + luma(texture2D(u_tex, candUV + vec2(0.0,  px.y)).rgb)
+                   + luma(texture2D(u_tex, candUV - vec2(0.0,  px.y)).rgb)) * 0.25;
+        if (cl < avg + 0.07) continue;
+
+        // Per-sparkle twinkle with unique phase and rate
+        float phase   = hash(c + vec2(5.3,  13.7)) * 6.2832;
+        float rate    = 0.9 + hash(c + vec2(2.9,   7.1)) * 1.4;
+        float twinkle = pow(0.5 + 0.5 * sin(u_time * rate + phase), 2.0);
+        if (twinkle < 0.005) continue;
+
+        // Size driven by hotspot brightness + slider
+        float size = (3.5 + cl * 10.5) * mix(0.45, 1.0, u_sparkle);
+
+        vec2  delta = gl_FragCoord.xy - candPx;
+        float shape = sparkleShape(delta, size);
+        if (shape < 0.002) continue;
+
+        // Cool-white with slight per-sparkle hue shift (white → soft lavender)
+        float hv    = hash(c + vec2(11.1, 23.3));
+        vec3  color = mix(vec3(0.88, 0.95, 1.00), vec3(0.95, 0.88, 1.00), hv * 0.45);
+
+        glow += color * shape * twinkle;
+      }
+    }
+
+    // Slider drives intensity: subtle at 0, dramatic at 1
+    float intensity = mix(0.35, 1.4, u_sparkle);
+    gl_FragColor = vec4(clamp(scene + glow * intensity, 0.0, 1.0), 1.0);
   }
 `
 
@@ -210,10 +249,12 @@ function makeProgram(gl, vert, frag) {
   return prog
 }
 
-export default function WaterShader({ sparkle = 0 }) {
+export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
   const canvasRef  = useRef(null)
   const sparkleRef = useRef(sparkle)
+  const choppyRef  = useRef(choppy)
   useEffect(() => { sparkleRef.current = sparkle }, [sparkle])
+  useEffect(() => { choppyRef.current  = choppy  }, [choppy])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -249,8 +290,9 @@ export default function WaterShader({ sparkle = 0 }) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
 
     // ── uniforms ──────────────────────────────────────────────────────────────
-    const uOceanRes  = gl.getUniformLocation(oceanProg, 'u_res')
-    const uOceanTime = gl.getUniformLocation(oceanProg, 'u_time')
+    const uOceanRes    = gl.getUniformLocation(oceanProg, 'u_res')
+    const uOceanTime   = gl.getUniformLocation(oceanProg, 'u_time')
+    const uOceanChoppy = gl.getUniformLocation(oceanProg, 'u_choppy')
     const uStarTex   = gl.getUniformLocation(starProg,  'u_tex')
     const uStarRes   = gl.getUniformLocation(starProg,  'u_res')
     const uStarSp    = gl.getUniformLocation(starProg,  'u_sparkle')
@@ -260,7 +302,7 @@ export default function WaterShader({ sparkle = 0 }) {
     let raf
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio, 2)
+      const dpr = window.devicePixelRatio || 1
       canvas.width  = Math.round(canvas.offsetWidth  * dpr)
       canvas.height = Math.round(canvas.offsetHeight * dpr)
       gl.viewport(0, 0, canvas.width, canvas.height)
@@ -282,6 +324,7 @@ export default function WaterShader({ sparkle = 0 }) {
       bindQuad(oceanProg)
       gl.uniform2f(uOceanRes, w, h)
       gl.uniform1f(uOceanTime, t)
+      gl.uniform1f(uOceanChoppy, 1.0 + choppyRef.current * 8.0)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
 
       // Pass 2 — star filter → screen

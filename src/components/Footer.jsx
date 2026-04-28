@@ -36,9 +36,9 @@ export default function Footer() {
           }}>
             <div style={{
               fontSize: 'clamp(48px, 8vw, 120px)',
-              fontWeight: '300',
+              fontWeight: '500',
               color: '#171717',
-              letterSpacing: '-0.04em',
+              letterSpacing: '-1px',
               lineHeight: 1,
               textAlign: 'center',
               padding: '48px',
@@ -57,8 +57,8 @@ export default function Footer() {
                 borderBottom: '1px solid #F0F0F0',
                 paddingBlock: '8px',
               }}>
-                <span style={{ color: 'rgba(0,0,0,0.44)', fontSize: '16px', lineHeight: '1.6' }}>{label}</span>
-                <span style={{ color: '#171717', fontSize: '16px', lineHeight: '1.6', textAlign: 'right' }}>{value}</span>
+                <span style={{ color: 'rgba(0,0,0,0.44)', fontSize: '16px', lineHeight: '1.6', fontWeight: '500', letterSpacing: '-1px' }}>{label}</span>
+                <span style={{ color: '#171717', fontSize: '16px', lineHeight: '1.6', fontWeight: '500', letterSpacing: '-1px', textAlign: 'right' }}>{value}</span>
               </div>
             ))}
           </div>

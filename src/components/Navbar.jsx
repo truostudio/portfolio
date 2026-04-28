@@ -19,12 +19,14 @@ const pill = {
   lineHeight: '20px',
   color: '#171717',
   fontFamily: 'inherit',
+  fontWeight: '500',
+  letterSpacing: '-1px',
   whiteSpace: 'nowrap',
 }
 
 export default function Navbar() {
   return (
-    <nav style={{ position: 'sticky', top: 0, zIndex: 100, paddingBlock: '20px' }}>
+    <nav style={{ paddingBlock: '48px' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
