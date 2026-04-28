@@ -87,6 +87,10 @@ export default function Hero() {
   return (
     <section style={{ paddingBottom: '24px', marginTop: '-8px' }}>
       <style>{`
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
         @keyframes gelHover {
           0%   { transform: scale(1); }
           10%  { transform: scale(1.20, 0.85); }
@@ -174,8 +178,10 @@ export default function Hero() {
             height: isTablet ? '480px' : '640px', borderRadius: isTablet ? '32px' : '48px',
             backgroundColor: '#004C63', overflow: 'clip', position: 'relative',
           }}>
-            <WaterShader sparkle={sparkle} choppy={choppy} />
-            <FilmGrain />
+            <div style={{ position: 'absolute', inset: 0, animation: 'heroFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+              <WaterShader sparkle={sparkle} choppy={choppy} />
+              <FilmGrain />
+            </div>
 
             {/* Sparkle button — morphs into slider pill on click */}
             <div
@@ -293,7 +299,9 @@ export default function Hero() {
               onMouseLeave={() => setPhotoHovered(false)}
               onClick={() => setPhotoLocked(l => !l)}
             >
-              <PhotoDither hovered={photoHovered} locked={photoLocked} src="/photo.jpg" />
+              <div style={{ position: 'absolute', inset: 0, animation: 'heroFadeIn 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both' }}>
+                <PhotoDither hovered={photoHovered} locked={photoLocked} src="/photo.jpg" />
+              </div>
               <div style={{
                 position: 'absolute', inset: 0,
                 display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
