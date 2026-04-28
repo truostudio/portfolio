@@ -220,18 +220,22 @@ export default function PhotoDither({ hovered, src }) {
     return () => { cancelled = true }
   }, [src])
 
-  function handleMouseMove(e) {
-    const rect = canvasRef.current.getBoundingClientRect()
-    mouseRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+  // window-level listener so the overlay div doesn't block mousemove events
+  useEffect(() => {
+    if (!hovered) return
+    function onMove(e) {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const rect = canvas.getBoundingClientRect()
+      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
     }
-  }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [hovered])
 
   return (
     <canvas
       ref={canvasRef}
-      onMouseMove={handleMouseMove}
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
     />
   )
