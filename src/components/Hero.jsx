@@ -70,7 +70,7 @@ export default function Hero() {
   const [slamKeys, setSlamKeys]     = useState({ Sparkle: 0, Choppy: 0 })
   const [pillAnim, setPillAnim]     = useState('none')
   const [photoHovered, setPhotoHovered] = useState(false)
-  const [photoLocked,  setPhotoLocked]  = useState(false)
+  const [photoLocked,  setPhotoLocked]  = useState(true)
   const pillRef                     = useRef(null)
 
   useEffect(() => {
