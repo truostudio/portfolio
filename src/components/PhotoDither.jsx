@@ -16,6 +16,7 @@ uniform float u_hover;
 uniform float u_dpr;
 uniform vec2  u_res;
 uniform float u_imgAspect;
+uniform vec2  u_mouse;
 varying vec2 v_uv;
 
 float bayer4(vec2 p) {
@@ -58,8 +59,13 @@ void main() {
   else if (dl < 0.75) dithered = c2;
   else                dithered = c3;
 
-  float e    = u_hover * (17.0 / 16.0) - (1.0 / 16.0);
-  float flip = step(t, e);
+  // circular reveal around cursor; radius grows with u_hover
+  float radius = u_hover * 200.0 * u_dpr;
+  float dist   = length(gl_FragCoord.xy - u_mouse);
+  float mask   = 1.0 - smoothstep(radius * 0.85, radius, dist);
+
+  // full dither within circle (step(t, 1.0) is always 1 for t in [0,1))
+  float flip = step(t, 1.0) * mask;
   gl_FragColor = vec4(mix(src.rgb, dithered, flip), 1.0);
 }
 `
@@ -114,8 +120,10 @@ export default function PhotoDither({ hovered, src }) {
   const uDprRef        = useRef(null)
   const uResRef        = useRef(null)
   const uImgAspectRef  = useRef(null)
+  const uMouseRef      = useRef(null)
   const imgAspectRef   = useRef(1.0)
   const stateRef       = useRef({ hover: 0, target: 0, raf: null })
+  const mouseRef       = useRef({ x: -9999, y: -9999 })
 
   useEffect(() => {
     stateRef.current.target = hovered ? 1 : 0
@@ -146,6 +154,7 @@ export default function PhotoDither({ hovered, src }) {
     uDprRef.current       = gl.getUniformLocation(prog, 'u_dpr')
     uResRef.current       = gl.getUniformLocation(prog, 'u_res')
     uImgAspectRef.current = gl.getUniformLocation(prog, 'u_imgAspect')
+    uMouseRef.current     = gl.getUniformLocation(prog, 'u_mouse')
     gl.uniform1i(gl.getUniformLocation(prog, 'u_tex'), 0)
 
     texRef.current = makePlaceholder(gl)
@@ -170,10 +179,16 @@ export default function PhotoDither({ hovered, src }) {
       const dpr = window.devicePixelRatio || 1
       st.hover += (st.target - st.hover) * 0.1
       if (Math.abs(st.target - st.hover) < 0.002) st.hover = st.target
+
+      // convert CSS mouse coords to WebGL canvas coords (y flipped)
+      const mx = mouseRef.current.x * dpr
+      const my = canvas.height - mouseRef.current.y * dpr
+
       gl.uniform1f(uHoverRef.current,     st.hover)
       gl.uniform1f(uDprRef.current,       dpr)
       gl.uniform2f(uResRef.current,       canvas.width, canvas.height)
       gl.uniform1f(uImgAspectRef.current, imgAspectRef.current)
+      gl.uniform2f(uMouseRef.current,     mx, my)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
       st.raf = requestAnimationFrame(frame)
     }
@@ -205,9 +220,18 @@ export default function PhotoDither({ hovered, src }) {
     return () => { cancelled = true }
   }, [src])
 
+  function handleMouseMove(e) {
+    const rect = canvasRef.current.getBoundingClientRect()
+    mouseRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    }
+  }
+
   return (
     <canvas
       ref={canvasRef}
+      onMouseMove={handleMouseMove}
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
     />
   )
