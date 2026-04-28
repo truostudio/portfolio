@@ -126,7 +126,6 @@ export default function PhotoDither({ hovered, src }) {
     let cancelled = false
     const gl = glRef.current
     const img = new Image()
-    img.crossOrigin = 'anonymous'
     img.onload = () => {
       if (cancelled) return
       imgAspectRef.current = img.naturalWidth / img.naturalHeight
