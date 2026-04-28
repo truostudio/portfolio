@@ -122,23 +122,6 @@ export default function PhotoDither({ hovered, src }) {
   }, [hovered])
 
   useEffect(() => {
-    if (!src || !glRef.current) return
-    let cancelled = false
-    const gl = glRef.current
-    const img = new Image()
-    img.onload = () => {
-      if (cancelled) return
-      imgAspectRef.current = img.naturalWidth / img.naturalHeight
-      if (texRef.current) gl.deleteTexture(texRef.current)
-      texRef.current = uploadTex(gl, img)
-      gl.activeTexture(gl.TEXTURE0)
-      gl.bindTexture(gl.TEXTURE_2D, texRef.current)
-    }
-    img.src = src
-    return () => { cancelled = true }
-  }, [src])
-
-  useEffect(() => {
     const canvas = canvasRef.current
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
     if (!gl) return
@@ -203,6 +186,24 @@ export default function PhotoDither({ hovered, src }) {
       gl.deleteProgram(prog)
     }
   }, [])
+
+  useEffect(() => {
+    if (!src || !glRef.current) return
+    let cancelled = false
+    const gl = glRef.current
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      if (cancelled) return
+      imgAspectRef.current = img.naturalWidth / img.naturalHeight
+      if (texRef.current) gl.deleteTexture(texRef.current)
+      texRef.current = uploadTex(gl, img)
+      gl.activeTexture(gl.TEXTURE0)
+      gl.bindTexture(gl.TEXTURE_2D, texRef.current)
+    }
+    img.src = src
+    return () => { cancelled = true }
+  }, [src])
 
   return (
     <canvas
