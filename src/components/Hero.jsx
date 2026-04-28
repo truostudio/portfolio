@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import WaterShader from './WaterShader'
 import FilmGrain from './FilmGrain'
 import PhotoDither from './PhotoDither'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 
 function LocalClock() {
   const [time, setTime] = useState(() => new Date())
@@ -61,6 +62,7 @@ const glassPill = {
 }
 
 export default function Hero() {
+  const { isMobile } = useBreakpoint()
   const [sparkle, setSparkle]       = useState(0.5)
   const [choppy,  setChoppy]        = useState(0.5)
   const [sliderOpen, setSliderOpen] = useState(false)
@@ -68,6 +70,7 @@ export default function Hero() {
   const [slamKeys, setSlamKeys]     = useState({ Sparkle: 0, Choppy: 0 })
   const [pillAnim, setPillAnim]     = useState('none')
   const [photoHovered, setPhotoHovered] = useState(false)
+  const [photoLocked,  setPhotoLocked]  = useState(false)
   const pillRef                     = useRef(null)
 
   useEffect(() => {
@@ -162,12 +165,13 @@ export default function Hero() {
           border: none;
         }
       `}</style>
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: '48px' }}>
-        <div style={{ display: 'flex', gap: '48px', maxWidth: '1496px', marginInline: 'auto' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '16px' : '48px', maxWidth: '1496px', marginInline: 'auto' }}>
 
           {/* Left — water shader card */}
           <div style={{
-            flex: 1, height: '640px', borderRadius: '48px',
+            flex: isMobile ? 'none' : 1, width: isMobile ? '100%' : undefined,
+            height: isMobile ? '480px' : '640px', borderRadius: isMobile ? '32px' : '48px',
             backgroundColor: '#004C63', overflow: 'clip', position: 'relative',
           }}>
             <WaterShader sparkle={sparkle} choppy={choppy} />
@@ -181,7 +185,7 @@ export default function Hero() {
               onMouseLeave={() => { if (!sliderOpen) setPillAnim('out') }}
               style={{
                 ...glassPill,
-                position: 'absolute', top: '36px', right: '36px',
+                position: 'absolute', top: isMobile ? '20px' : '36px', right: isMobile ? '20px' : '36px',
                 zIndex: 1,
                 height: 48,
                 width: sliderOpen ? 240 : 48,
@@ -253,18 +257,18 @@ export default function Hero() {
             </div>
 
             {/* Bio overlay */}
-            <div style={{ position: 'absolute', bottom: '36px', left: '36px', right: '36px', zIndex: 1 }}>
+            <div style={{ position: 'absolute', bottom: isMobile ? '20px' : '36px', left: isMobile ? '20px' : '36px', right: isMobile ? '20px' : '36px', zIndex: 1 }}>
               <div style={{
-                borderRadius: '24px',
+                borderRadius: '20px',
                 backdropFilter: 'blur(6px) saturate(1.0)',
                 WebkitBackdropFilter: 'blur(6px) saturate(1.0)',
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.18)',
                 boxShadow: 'rgba(255,255,255,0.12) 0px 1px 0px inset, rgba(0,0,0,0.10) 0px 8px 32px',
-                padding: '28px',
-                display: 'flex', flexDirection: 'column', gap: '48px',
+                padding: isMobile ? '20px' : '28px',
+                display: 'flex', flexDirection: 'column', gap: isMobile ? '36px' : '48px',
               }}>
-                <p style={{ color: '#FFABDC', fontSize: '24px', lineHeight: '1.4', margin: 0, paddingRight: '80px', fontWeight: '500', letterSpacing: '-1px' }}>
+                <p style={{ color: '#FFABDC', fontSize: isMobile ? '22px' : '24px', lineHeight: '1.4', margin: 0, paddingRight: isMobile ? '0' : '80px', fontWeight: '500', letterSpacing: '-1px' }}>
                   Robert is a product designer <span style={{ whiteSpace: 'nowrap' }}>based in Toronto, Canada.</span>
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -276,32 +280,37 @@ export default function Hero() {
           </div>
 
           {/* Right — photo card with Bayer dither on hover */}
-          <div
-            style={{
-              flex: 1, height: '640px', borderRadius: '48px',
-              backgroundColor: '#0a1628',
-              overflow: 'clip', position: 'relative',
-            }}
-            onMouseEnter={() => setPhotoHovered(true)}
-            onMouseLeave={() => setPhotoHovered(false)}
-          >
-            <PhotoDither hovered={photoHovered} src="/photo.jpg" />
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
-              padding: '36px', gap: '12px',
-              zIndex: 1,
-            }}>
-              <div style={{ ...glassPill, padding: '14px 28px' }}>
-                <span style={{ color: '#ffffff', fontSize: '16px', letterSpacing: '0.16px', whiteSpace: 'nowrap' }}>
-                  Learn about me
-                </span>
-              </div>
-              <div style={{ ...glassPill, width: 48, height: 48 }}>
-                <span style={{ color: '#ffffff', fontSize: '20px' }}>→</span>
+          {!isMobile && (
+            <div
+              style={{
+                flex: 1,
+                height: '640px', borderRadius: '48px',
+                backgroundColor: '#0a1628',
+                overflow: 'clip', position: 'relative',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={() => setPhotoHovered(true)}
+              onMouseLeave={() => setPhotoHovered(false)}
+              onClick={() => setPhotoLocked(l => !l)}
+            >
+              <PhotoDither hovered={photoHovered} locked={photoLocked} src="/photo.jpg" />
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
+                padding: '36px', gap: '12px',
+                zIndex: 1,
+              }}>
+                <div style={{ ...glassPill, padding: '14px 28px' }}>
+                  <span style={{ color: '#ffffff', fontSize: '16px', letterSpacing: '0.16px', whiteSpace: 'nowrap' }}>
+                    Learn about me
+                  </span>
+                </div>
+                <div style={{ ...glassPill, width: 48, height: 48 }}>
+                  <span style={{ color: '#ffffff', fontSize: '20px' }}>→</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
         </div>
       </div>

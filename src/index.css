@@ -8,6 +8,7 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
   /* Off-white with very faint blue undertone — makes glass refraction visible */
   background: #ffffff;
   min-height: 100vh;

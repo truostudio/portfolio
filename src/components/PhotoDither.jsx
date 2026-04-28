@@ -17,6 +17,8 @@ uniform float u_dpr;
 uniform vec2  u_res;
 uniform float u_imgAspect;
 uniform vec2  u_mouse;
+uniform float u_enter_t;
+uniform float u_locked;
 varying vec2 v_uv;
 
 float bayer4(vec2 p) {
@@ -48,10 +50,11 @@ void main() {
   float t  = bayer4(gl_FragCoord.xy / (4.0 * u_dpr));
   float dl = clamp(lum + (t - 0.5) * 0.4, 0.0, 1.0);
 
-  vec3 c0 = vec3(0.047, 0.102, 0.031); // #0C1A08 near-black shadow
-  vec3 c1 = vec3(0.361, 0.702, 0.290); // #5CB34A vivid leaf green
-  vec3 c2 = vec3(1.000, 0.373, 0.627); // #FF5FA0 hot pink
-  vec3 c3 = vec3(1.000, 0.910, 0.961); // #FFE8F5 pale blush
+  // blue + pink palette
+  vec3 c0 = vec3(0.020, 0.020, 0.080); // near-black blue
+  vec3 c1 = vec3(0.239, 0.494, 1.000); // vivid blue   #3D7EFF
+  vec3 c2 = vec3(1.000, 0.302, 0.580); // hot pink     #FF4D94
+  vec3 c3 = vec3(1.000, 0.839, 0.941); // pale pink    #FFD6F0
 
   vec3 dithered;
   if      (dl < 0.25) dithered = c0;
@@ -59,14 +62,17 @@ void main() {
   else if (dl < 0.75) dithered = c2;
   else                dithered = c3;
 
-  // circular reveal around cursor; radius grows with u_hover
-  float radius = u_hover * 200.0 * u_dpr;
-  float dist   = length(gl_FragCoord.xy - u_mouse);
-  float mask   = 1.0 - smoothstep(radius * 0.85, radius, dist);
+  // entrance animation: brief blue-white flash — suppressed when locked
+  float flash = exp(-u_enter_t * 9.0) * 0.70 * (1.0 - u_locked);
+  dithered = mix(dithered, vec3(0.82, 0.88, 1.00), flash);
 
-  // full dither within circle (step(t, 1.0) is always 1 for t in [0,1))
-  float flip = step(t, 1.0) * mask;
-  gl_FragColor = vec4(mix(src.rgb, dithered, flip), 1.0);
+  // hard circle edge with a brief pop-overshoot on entry
+  float pop    = exp(-u_enter_t * 7.0) * 0.28;
+  float radius = u_hover * 100.0 * u_dpr * (1.0 + pop);
+  float dist   = length(gl_FragCoord.xy - u_mouse);
+  float mask   = u_locked > 0.5 ? 1.0 : step(dist, radius);
+
+  gl_FragColor = vec4(mix(src.rgb, dithered, mask), 1.0);
 }
 `
 
@@ -112,7 +118,7 @@ function makePlaceholder(gl) {
   return uploadTex(gl, cv)
 }
 
-export default function PhotoDither({ hovered, src }) {
+export default function PhotoDither({ hovered, locked, src }) {
   const canvasRef      = useRef(null)
   const glRef          = useRef(null)
   const texRef         = useRef(null)
@@ -121,13 +127,19 @@ export default function PhotoDither({ hovered, src }) {
   const uResRef        = useRef(null)
   const uImgAspectRef  = useRef(null)
   const uMouseRef      = useRef(null)
+  const uEnterTRef     = useRef(null)
+  const uLockedRef     = useRef(null)
   const imgAspectRef   = useRef(1.0)
-  const stateRef       = useRef({ hover: 0, target: 0, raf: null })
+  const stateRef       = useRef({ hover: 0, target: 0, raf: null, hoverAt: -Infinity })
+  const lockedRef      = useRef(locked)
   const mouseRef       = useRef({ x: -9999, y: -9999 })
 
   useEffect(() => {
+    if (hovered) stateRef.current.hoverAt = performance.now()
     stateRef.current.target = hovered ? 1 : 0
   }, [hovered])
+
+  useEffect(() => { lockedRef.current = locked }, [locked])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -155,6 +167,8 @@ export default function PhotoDither({ hovered, src }) {
     uResRef.current       = gl.getUniformLocation(prog, 'u_res')
     uImgAspectRef.current = gl.getUniformLocation(prog, 'u_imgAspect')
     uMouseRef.current     = gl.getUniformLocation(prog, 'u_mouse')
+    uEnterTRef.current    = gl.getUniformLocation(prog, 'u_enter_t')
+    uLockedRef.current    = gl.getUniformLocation(prog, 'u_locked')
     gl.uniform1i(gl.getUniformLocation(prog, 'u_tex'), 0)
 
     texRef.current = makePlaceholder(gl)
@@ -184,11 +198,15 @@ export default function PhotoDither({ hovered, src }) {
       const mx = mouseRef.current.x * dpr
       const my = canvas.height - mouseRef.current.y * dpr
 
+      const enterT = (performance.now() - st.hoverAt) / 1000
+
       gl.uniform1f(uHoverRef.current,     st.hover)
       gl.uniform1f(uDprRef.current,       dpr)
       gl.uniform2f(uResRef.current,       canvas.width, canvas.height)
       gl.uniform1f(uImgAspectRef.current, imgAspectRef.current)
       gl.uniform2f(uMouseRef.current,     mx, my)
+      gl.uniform1f(uEnterTRef.current,    Math.max(0, enterT))
+      gl.uniform1f(uLockedRef.current,    lockedRef.current ? 1.0 : 0.0)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
       st.raf = requestAnimationFrame(frame)
     }

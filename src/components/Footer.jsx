@@ -1,4 +1,7 @@
+import { useBreakpoint } from '../hooks/useBreakpoint'
+
 export default function Footer() {
+  const { isMobile } = useBreakpoint()
   const rows = [
     { label: 'Copyright', value: '© 2026' },
     { label: 'Made in', value: 'Toronto, Canada' },
@@ -11,14 +14,14 @@ export default function Footer() {
       <div style={{
         maxWidth: '1554px',
         marginInline: 'auto',
-        paddingInline: '48px',
-        marginBottom: '48px',
+        paddingInline: isMobile ? '16px' : '48px',
+        marginBottom: isMobile ? '24px' : '48px',
       }}>
         <div style={{
           backgroundColor: '#fff',
           border: '1px solid #EAEAE6',
-          borderRadius: '48px',
-          padding: '48px',
+          borderRadius: isMobile ? '32px' : '48px',
+          padding: isMobile ? '24px' : '48px',
           display: 'flex',
           flexDirection: 'column',
           gap: '48px',
@@ -28,7 +31,7 @@ export default function Footer() {
             backgroundColor: '#F9F9F9',
             border: '1px solid #EAEAE6',
             borderRadius: '24px',
-            height: '320px',
+            height: isMobile ? '180px' : '320px',
             overflow: 'clip',
             display: 'flex',
             alignItems: 'center',
