@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import UniblockSpinner from './UniblockSpinner'
+import MakiverseSpinner from './MakiverseSpinner'
 
 const cardBase = {
   backgroundColor: '#fff',
@@ -338,9 +339,55 @@ function RebrandCard() {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         pointerEvents: 'none',
       }}>
-        <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
+        <div style={{
+          transform: hovered ? 'scale(1.18)' : 'scale(1)',
+          transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}>
+          <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
+        </div>
       </div>
       <HoverLabel title="Uniblock Design" hovered={hovered} />
+    </div>
+  )
+}
+
+function MakiverseCard() {
+  const navigate = useNavigate()
+  const [hovered, setHovered] = useState(false)
+  const { isTablet } = useBreakpoint()
+  const mouseRef = useRef({ x: -999, y: -999, inside: false })
+
+  return (
+    <div
+      style={{ ...cardBase, aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
+      onMouseEnter={() => { setHovered(true); mouseRef.current.inside = true }}
+      onMouseLeave={() => { setHovered(false); mouseRef.current.inside = false }}
+      onMouseMove={e => {
+        const r = e.currentTarget.getBoundingClientRect()
+        mouseRef.current.x = e.clientX - r.left
+        mouseRef.current.y = e.clientY - r.top
+      }}
+      onClick={() => navigate('/case-study/makiverse')}
+    >
+      <DotGrid mouseRef={mouseRef} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          transform: hovered ? 'scale(1.18)' : 'scale(1)',
+          transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}>
+          <MakiverseSpinner size={isTablet ? 96 : 140} interactive={false} />
+        </div>
+      </div>
+      <HoverLabel title="Makiverse Design" hovered={hovered} />
     </div>
   )
 }
@@ -435,10 +482,10 @@ export default function Work() {
       <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap, maxWidth: '1496px', marginInline: 'auto' }}>
 
-          {/* Row 1 — rebrand case study + wip */}
+          {/* Row 1 — rebrand + makiverse case studies */}
           <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
             <RebrandCard />
-            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
+            <MakiverseCard />
           </div>
 
           {/* Row 2 — three wip grid cards */}
@@ -448,10 +495,11 @@ export default function Work() {
             ))}
           </div>
 
-          {/* Row 3 — two wip cards */}
-          <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
-            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
-            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
+          {/* Row 3 — three wip poster cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
+            {[0, 1, 2].map(i => (
+              <WIPCard key={i} style={{ height: isTablet ? '300px' : '454px' }} />
+            ))}
           </div>
 
           {/* Row 4 — three poster grid cards */}

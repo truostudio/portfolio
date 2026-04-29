@@ -1,0 +1,170 @@
+import { useEffect } from 'react'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import MakiverseSpinner from '../components/MakiverseSpinner'
+import { useBreakpoint } from '../hooks/useBreakpoint'
+
+function Section({ children, style, isMobile }) {
+  return (
+    <div style={{
+      maxWidth: '1200px',
+      marginInline: 'auto',
+      paddingInline: isMobile ? '16px' : '48px',
+      boxSizing: 'border-box',
+      ...style,
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function VideoCard({ src, style }) {
+  return (
+    <div style={{
+      width: '100%',
+      backgroundColor: '#fff',
+      border: '1px solid #E9E9E9',
+      overflow: 'hidden',
+      ...style,
+    }}>
+      {src
+        ? <video src={src} autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }} />
+        : <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#F3F3F3' }} />
+      }
+    </div>
+  )
+}
+
+export default function CaseStudyMakiverse() {
+  const { isMobile, isTablet } = useBreakpoint()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.title = 'Makiverse - Case Study'
+    return () => { document.title = 'Robert Pham - Portfolio' }
+  }, [])
+
+  const cardRadius = isMobile ? '24px' : '48px'
+  const sectionGap = isMobile ? '80px' : '160px'
+
+  const heading = {
+    margin: 0,
+    fontSize: isMobile ? '17px' : '20px',
+    fontWeight: '500',
+    color: '#333333',
+    letterSpacing: '-0.5px',
+    lineHeight: 1.5,
+    textAlign: 'center',
+  }
+
+  const body = {
+    margin: 0,
+    fontSize: isMobile ? '17px' : '20px',
+    fontWeight: '500',
+    color: '#333333',
+    letterSpacing: '-0.5px',
+    lineHeight: 1.6,
+    textAlign: 'center',
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+
+      <Navbar />
+      <MakiverseSpinner />
+
+      {/* Hero title */}
+      <div style={{ paddingTop: '32px', paddingBottom: isMobile ? '64px' : '120px', paddingInline: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <h1 style={{
+            margin: 0,
+            fontSize: '20px',
+            fontWeight: '500',
+            color: '#171717',
+            letterSpacing: '-1px',
+            lineHeight: 1.2,
+            textAlign: 'center',
+          }}>
+            Makiverse Design
+          </h1>
+          <p style={{
+            margin: 0,
+            fontSize: isMobile ? '17px' : '20px',
+            fontWeight: '500',
+            color: 'rgba(0,0,0,0.40)',
+            letterSpacing: '-1px',
+            textAlign: 'center',
+            maxWidth: '520px',
+          }}>
+            A full generative AI platform. Designed end to end.
+          </p>
+        </div>
+      </div>
+
+      {/* 1. Agent — full-width video */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/maki-agent.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 1. Agent — copy */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          The agent navigates the full platform autonomously. One prompt generates the characters, panels, and the finished manga.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          Designing for an agent meant designing for both. The UI had to be legible to a human and navigable by a machine without intervention.
+        </p>
+      </Section>
+
+      {/* 2. Character gen — full-width video */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/maki-character-generation.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 2. Character gen — copy */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...body, maxWidth: '560px' }}>
+          Character consistency is the hardest problem in generative AI. My job was to make that complexity invisible.
+        </p>
+        <p style={{ ...body, maxWidth: '560px' }}>
+          Working closely with the ML team, I designed an experience any user could pick up and run with.
+        </p>
+      </Section>
+
+      {/* 3. Home page — full-width video */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/maki-home.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 3. Home page — copy */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
+        <p style={{ ...body, maxWidth: '560px' }}>
+          The home page sets the tone for the whole product. The goal was to make a complex platform feel immediately approachable.
+        </p>
+      </Section>
+
+      {/* 4. Store variants — two-up */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+        <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: '16px' }}>
+          <VideoCard src="/maki-store1.mp4" style={{ flex: 1, borderRadius: cardRadius }} />
+          <VideoCard src="/maki-store2.mp4" style={{ flex: 1, borderRadius: cardRadius }} />
+        </div>
+      </Section>
+
+      {/* 5. Design language — copy */}
+      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          One design language across the full platform, built from scratch as the sole designer.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          From the generation tools to the editor to the storefront, every surface shares the same system. Built with enough structure to scale.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          The platform is still growing. More features are in the works.
+        </p>
+      </Section>
+
+      <Footer />
+    </div>
+  )
+}

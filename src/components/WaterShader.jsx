@@ -303,7 +303,7 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
     let raf, lastFrame = 0
 
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
       canvas.width  = Math.round(canvas.offsetWidth  * dpr)
       canvas.height = Math.round(canvas.offsetHeight * dpr)
       gl.viewport(0, 0, canvas.width, canvas.height)
