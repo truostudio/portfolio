@@ -7,12 +7,10 @@ export default function Footer() {
     { label: 'Made in', value: 'Toronto, Canada' },
     {
       label: 'Get in touch', value: (
-        <span>
-          <a href="mailto:robert@truo.studio" className="footer-link">robert@truo.studio</a>
-          {' · '}
+        <span style={{ display: 'flex', gap: '16px' }}>
           <a href="https://github.com/truostudio" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
-          {' · '}
           <a href="https://www.linkedin.com/in/robertpham-/" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
+          <a href="mailto:robert@truo.studio" className="footer-link">robert@truo.studio</a>
         </span>
       )
     },
