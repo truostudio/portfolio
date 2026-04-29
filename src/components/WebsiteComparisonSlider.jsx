@@ -7,7 +7,7 @@ const EASE_MS   = 1400
 export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Before', newLabel = 'After' }) {
   const containerRef = useRef()
   const draggingRef  = useRef(false)
-  const [pct, setPct]         = useState(75)
+  const [pct, setPct]           = useState(75)
   const [dragging, setDragging] = useState(false)
   const [animate, setAnimate]   = useState(false)
   const idxRef = useRef(0)
@@ -34,7 +34,7 @@ export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Be
   }
 
   function onPointerDown(e) {
-    e.currentTarget.setPointerCapture(e.pointerId)
+    containerRef.current.setPointerCapture(e.pointerId)
     draggingRef.current = true
     setDragging(true)
     setAnimate(false)
@@ -51,12 +51,12 @@ export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Be
     setDragging(false)
   }
 
+  const ease = `${EASE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)`
   const imgStyle = {
     position: 'absolute', inset: 0,
     width: '100%', height: '100%',
     objectFit: 'cover', objectPosition: 'top center',
     userSelect: 'none', pointerEvents: 'none',
-    imageRendering: 'high-quality',
   }
 
   return (
@@ -68,22 +68,23 @@ export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Be
         overflow: 'hidden',
         aspectRatio: '2082 / 1268',
         userSelect: 'none',
-        cursor: dragging ? 'ew-resize' : 'default',
+        cursor: dragging ? 'ew-resize' : 'col-resize',
       }}
+      onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
-      {/* Old — left side, sits underneath */}
+      {/* Old — left, underneath */}
       {oldSrc
         ? <img src={oldSrc} alt={oldLabel} style={imgStyle} />
         : <div style={{ position: 'absolute', inset: 0, background: '#0A1628' }} />
       }
 
-      {/* New — right side, clips in from the right */}
+      {/* New — clips in from the right */}
       <div style={{
         position: 'absolute', inset: 0,
         clipPath: `inset(0 0 0 ${pct}%)`,
-        transition: animate ? `clip-path ${EASE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)` : 'none',
+        transition: animate ? `clip-path ${ease}` : 'none',
       }}>
         {newSrc
           ? <img src={newSrc} alt={newLabel} style={imgStyle} />
@@ -92,37 +93,30 @@ export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Be
       </div>
 
       {/* Divider */}
-      <div
-        style={{
-          position: 'absolute', top: 0, bottom: 0,
-          left: `${pct}%`,
-          width: '1px',
-          background: 'rgba(255,255,255,0.6)',
-          transform: 'translateX(-50%)',
-          pointerEvents: 'none',
-          transition: animate ? `left ${EASE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)` : 'none',
-        }}
-      />
+      <div style={{
+        position: 'absolute', top: 0, bottom: 0,
+        left: `${pct}%`,
+        width: '1px',
+        background: 'rgba(255,255,255,0.7)',
+        transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+        transition: animate ? `left ${ease}` : 'none',
+      }} />
 
       {/* Handle */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: `${pct}%`,
-          transform: 'translate(-50%, -50%)',
-          transition: animate ? `left ${EASE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)` : 'none',
-          width: '36px', height: '36px',
-          borderRadius: '50%',
-          background: '#fff',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
-          cursor: 'ew-resize',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 10,
-          flexShrink: 0,
-        }}
-        onPointerDown={onPointerDown}
-      >
+      <div style={{
+        position: 'absolute',
+        top: '50%', left: `${pct}%`,
+        transform: 'translate(-50%, -50%)',
+        transition: animate ? `left ${ease}` : 'none',
+        width: '36px', height: '36px',
+        borderRadius: '50%',
+        background: '#fff',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+        zIndex: 10,
+      }}>
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
           <path d="M1 5H13M1 5L3.5 2.5M1 5L3.5 7.5M13 5L10.5 2.5M13 5L10.5 7.5" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -135,18 +129,15 @@ export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Be
         color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
         pointerEvents: 'none',
         opacity: pct > 12 ? 1 : 0, transition: 'opacity 0.4s',
-      }}>
-        {oldLabel}
-      </div>
+      }}>{oldLabel}</div>
+
       <div style={{
         position: 'absolute', bottom: '20px', right: '20px',
         fontSize: '12px', fontWeight: '500', letterSpacing: '0.5px',
         color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase',
         pointerEvents: 'none',
         opacity: pct < 88 ? 1 : 0, transition: 'opacity 0.4s',
-      }}>
-        {newLabel}
-      </div>
+      }}>{newLabel}</div>
     </div>
   )
 }

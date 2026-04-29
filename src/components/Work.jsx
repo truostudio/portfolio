@@ -78,7 +78,7 @@ const projects = [
     id: 7,
     title: 'Ecosystem Announcement',
     body: 'Used Zora\'s logo as a playful double entendre. "Ecosystem" refers to Uniblock\'s position hosting and controlling endpoints across all blockchains, but their mark reads as a spherical planet, so it lives in space. Applied Uniblock\'s dither design language for consistency across the brand. Also drew on Artemis II themes given its relevancy at the time.',
-    image: '/poster-blockchains.png',
+    image: '/poster-blockchains.webp',
     bg: '#0a0a12',
     accent: '#3B82F6',
   },
