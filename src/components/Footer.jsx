@@ -1,3 +1,4 @@
+import { MeshGradient } from '@paper-design/shaders-react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
 export default function Footer() {
@@ -7,6 +8,8 @@ export default function Footer() {
     {
       label: 'Get in touch', value: (
         <span>
+          <a href="mailto:robert@truo.studio" className="footer-link">robert@truo.studio</a>
+          {' · '}
           <a href="https://github.com/truostudio" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
           {' · '}
           <a href="https://www.linkedin.com/in/robertpham-/" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
@@ -22,22 +25,6 @@ export default function Footer() {
         .footer-link {
           color: #171717;
           text-decoration: none;
-          position: relative;
-        }
-        .footer-link::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 100%;
-          height: 1px;
-          background: #171717;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .footer-link:hover::after {
-          transform: scaleX(1);
         }
       `}</style>
       <div style={{
@@ -57,25 +44,37 @@ export default function Footer() {
         }}>
           {/* Big name / headline area */}
           <div style={{
-            backgroundColor: '#F9F9F9',
-            border: '1px solid #EAEAE6',
             borderRadius: '24px',
             height: isTablet ? '180px' : '320px',
-            overflow: 'clip',
+            overflow: 'hidden',
+            position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
+            <MeshGradient
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+              colors={['#e0eaff', '#241d9a', '#f75092', '#9f50d3']}
+              distortion={0}
+              swirl={0.06}
+              grainMixer={0.1}
+              grainOverlay={0.27}
+              speed={1.72}
+              scale={1.12}
+              offsetX={-0.24}
+            />
             <div style={{
-              fontSize: 'clamp(48px, 8vw, 120px)',
+              position: 'relative',
+              fontSize: 'clamp(28px, 4vw, 56px)',
               fontWeight: '500',
-              color: '#171717',
+              color: '#ffffff',
               letterSpacing: '-1px',
               lineHeight: 1,
               textAlign: 'center',
               padding: '48px',
+              mixBlendMode: 'overlay',
             }}>
-              Robert P
+              Get in touch
             </div>
           </div>
 

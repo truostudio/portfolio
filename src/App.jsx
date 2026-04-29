@@ -22,7 +22,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/case-study/uniblock-design" element={<CaseStudyUniblockRebrand />} />
+        <Route path="/case-study/uniblock" element={<CaseStudyUniblockRebrand />} />
       </Routes>
     </BrowserRouter>
   )

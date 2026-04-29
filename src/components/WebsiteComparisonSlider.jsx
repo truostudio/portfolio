@@ -1,143 +1,101 @@
-import { useRef, useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
-const POSITIONS = [75, 25]
-const HOLD_MS   = 2200
-const EASE_MS   = 1400
+export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before', newLabel = 'After' }) {
+  const [active, setActive] = useState('new')
+  const oldVideoRef = useRef()
+  const newVideoRef = useRef()
 
-export default function WebsiteComparisonSlider({ oldSrc, newSrc, oldLabel = 'Before', newLabel = 'After' }) {
-  const containerRef = useRef()
-  const draggingRef  = useRef(false)
-  const [pct, setPct]           = useState(75)
-  const [dragging, setDragging] = useState(false)
-  const [animate, setAnimate]   = useState(false)
-  const idxRef = useRef(0)
-
-  useEffect(() => {
-    let timeout
-    function step() {
-      if (draggingRef.current) { timeout = setTimeout(step, 200); return }
-      idxRef.current = (idxRef.current + 1) % POSITIONS.length
-      setAnimate(true)
-      setPct(POSITIONS[idxRef.current])
-      timeout = setTimeout(() => {
-        setAnimate(false)
-        timeout = setTimeout(step, HOLD_MS)
-      }, EASE_MS)
+  function pick(key) {
+    setActive(key)
+    const ref = key === 'old' ? oldVideoRef : newVideoRef
+    if (ref.current) {
+      ref.current.currentTime = 0
+      ref.current.play()
     }
-    timeout = setTimeout(step, HOLD_MS)
-    return () => clearTimeout(timeout)
-  }, [])
-
-  function getX(e) {
-    const rect = containerRef.current.getBoundingClientRect()
-    return Math.max(4, Math.min(96, (e.clientX - rect.left) / rect.width * 100))
   }
 
-  function onPointerDown(e) {
-    containerRef.current.setPointerCapture(e.pointerId)
-    draggingRef.current = true
-    setDragging(true)
-    setAnimate(false)
-    setPct(getX(e))
-  }
-
-  function onPointerMove(e) {
-    if (!draggingRef.current) return
-    setPct(getX(e))
-  }
-
-  function onPointerUp() {
-    draggingRef.current = false
-    setDragging(false)
-  }
-
-  const ease = `${EASE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)`
-  const imgStyle = {
+  const mediaStyle = {
     position: 'absolute', inset: 0,
     width: '100%', height: '100%',
     objectFit: 'cover', objectPosition: 'top center',
-    userSelect: 'none', pointerEvents: 'none',
+    pointerEvents: 'none', userSelect: 'none',
+  }
+
+  function isVideo(src) {
+    return src && (src.includes('.mp4') || src.includes('.webm'))
   }
 
   return (
-    <div
-      ref={containerRef}
-      style={{
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+      {/* Segmented control */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{
+          display: 'flex',
+          background: '#EFEFEF',
+          borderRadius: '999px',
+          padding: '4px',
+          gap: '2px',
+        }}>
+          {[['old', oldLabel], ['new', newLabel]].map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => pick(key)}
+              style={{
+                padding: '8px 24px',
+                borderRadius: '999px',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: '14px',
+                fontWeight: '500',
+                letterSpacing: '-0.5px',
+                lineHeight: 1,
+                background: active === key ? '#ffffff' : 'transparent',
+                color: active === key ? '#171717' : 'rgba(0,0,0,0.4)',
+                boxShadow: active === key ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
+                transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Media */}
+      <div style={{
         position: 'relative',
         borderRadius: '24px',
         overflow: 'hidden',
-        aspectRatio: '2082 / 1268',
-        userSelect: 'none',
-        cursor: dragging ? 'ew-resize' : 'col-resize',
-      }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-    >
-      {/* Old — left, underneath */}
-      {oldSrc
-        ? <img src={oldSrc} alt={oldLabel} style={imgStyle} />
-        : <div style={{ position: 'absolute', inset: 0, background: '#0A1628' }} />
-      }
-
-      {/* New — clips in from the right */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        clipPath: `inset(0 0 0 ${pct}%)`,
-        transition: animate ? `clip-path ${ease}` : 'none',
+        aspectRatio: '1200 / 776',
+        background: '#111',
       }}>
-        {newSrc
-          ? <img src={newSrc} alt={newLabel} style={imgStyle} />
-          : <div style={{ width: '100%', height: '100%', background: '#F5FBFF' }} />
-        }
+        {/* Old */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          opacity: active === 'old' ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+        }}>
+          {isVideo(oldSrc)
+            ? <video ref={oldVideoRef} src={oldSrc} style={mediaStyle} autoPlay loop muted playsInline />
+            : oldSrc ? <img src={oldSrc} alt={oldLabel} style={mediaStyle} /> : null
+          }
+        </div>
+
+        {/* New */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          opacity: active === 'new' ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+        }}>
+          {isVideo(newSrc)
+            ? <video ref={newVideoRef} src={newSrc} style={mediaStyle} autoPlay loop muted playsInline />
+            : newSrc ? <img src={newSrc} alt={newLabel} style={mediaStyle} /> : null
+          }
+        </div>
       </div>
 
-      {/* Divider */}
-      <div style={{
-        position: 'absolute', top: 0, bottom: 0,
-        left: `${pct}%`,
-        width: '1px',
-        background: 'rgba(255,255,255,0.7)',
-        transform: 'translateX(-50%)',
-        pointerEvents: 'none',
-        transition: animate ? `left ${ease}` : 'none',
-      }} />
-
-      {/* Handle */}
-      <div style={{
-        position: 'absolute',
-        top: '50%', left: `${pct}%`,
-        transform: 'translate(-50%, -50%)',
-        transition: animate ? `left ${ease}` : 'none',
-        width: '36px', height: '36px',
-        borderRadius: '50%',
-        background: '#fff',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none',
-        zIndex: 10,
-      }}>
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M1 5H13M1 5L3.5 2.5M1 5L3.5 7.5M13 5L10.5 2.5M13 5L10.5 7.5" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-
-      {/* Labels */}
-      <div style={{
-        position: 'absolute', bottom: '20px', left: '20px',
-        fontSize: '12px', fontWeight: '500', letterSpacing: '0.5px',
-        color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
-        pointerEvents: 'none',
-        opacity: pct > 12 ? 1 : 0, transition: 'opacity 0.4s',
-      }}>{oldLabel}</div>
-
-      <div style={{
-        position: 'absolute', bottom: '20px', right: '20px',
-        fontSize: '12px', fontWeight: '500', letterSpacing: '0.5px',
-        color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase',
-        pointerEvents: 'none',
-        opacity: pct < 88 ? 1 : 0, transition: 'opacity 0.4s',
-      }}>{newLabel}</div>
     </div>
   )
 }
