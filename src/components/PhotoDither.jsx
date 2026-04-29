@@ -70,7 +70,7 @@ void main() {
   float pop    = exp(-u_enter_t * 7.0) * 0.28;
   float radius = u_hover * 100.0 * u_dpr * (1.0 + pop);
   float dist   = length(gl_FragCoord.xy - u_mouse);
-  float mask   = u_locked > 0.5 ? 1.0 : step(dist, radius);
+  float mask   = u_locked > 0.5 ? step(radius, dist) : step(dist, radius);
 
   gl_FragColor = vec4(mix(src.rgb, dithered, mask), 1.0);
 }
@@ -130,7 +130,7 @@ export default function PhotoDither({ hovered, locked, src }) {
   const uEnterTRef     = useRef(null)
   const uLockedRef     = useRef(null)
   const imgAspectRef   = useRef(1.0)
-  const stateRef       = useRef({ hover: 0, target: 0, raf: null, hoverAt: -Infinity })
+  const stateRef       = useRef({ hover: 0, target: 0, raf: null, hoverAt: -Infinity, ready: false })
   const lockedRef      = useRef(locked)
   const mouseRef       = useRef({ x: -9999, y: -9999 })
 
@@ -208,6 +208,10 @@ export default function PhotoDither({ hovered, locked, src }) {
       gl.uniform1f(uEnterTRef.current,    Math.max(0, enterT))
       gl.uniform1f(uLockedRef.current,    lockedRef.current ? 1.0 : 0.0)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+      if (!st.ready) {
+        st.ready = true
+        requestAnimationFrame(() => { if (canvasRef.current) canvasRef.current.style.opacity = '1' })
+      }
       st.raf = requestAnimationFrame(frame)
     }
 
@@ -254,7 +258,7 @@ export default function PhotoDither({ hovered, locked, src }) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', opacity: 0, transition: 'opacity 0.5s ease' }}
     />
   )
 }

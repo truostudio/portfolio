@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
+import UniblockSpinner from './UniblockSpinner'
 
 const cardBase = {
   backgroundColor: '#fff',
@@ -31,41 +32,6 @@ const rebrand = {
 }
 
 const projects = [
-  {
-    id: 1,
-    title: 'Vanta Mobile',
-    body: 'A mobile banking app redesign focused on reducing cognitive load during transactions. Built for iOS with a strong emphasis on clarity and accessibility.',
-    bg: '#F0F4FF',
-    accent: '#3B5BDB',
-  },
-  {
-    id: 2,
-    title: 'Studio Platform',
-    body: 'A collaborative design platform for distributed teams. Streamlines the handoff between design and engineering at scale.',
-    bg: '#FFF0F6',
-    accent: '#C2255C',
-  },
-  {
-    id: 3,
-    title: 'Atlas Design System',
-    body: 'A component library built for product teams at scale. Covers tokens, patterns, and living documentation across platforms.',
-    bg: '#F0FFF4',
-    accent: '#2F9E44',
-  },
-  {
-    id: 4,
-    title: 'Orbit Dashboard',
-    body: 'An analytics dashboard for ops teams. Surfaces real-time data with a focus on legibility and fast decision-making.',
-    bg: '#FFF9DB',
-    accent: '#E67700',
-  },
-  {
-    id: 5,
-    title: 'Lens App',
-    body: 'A photography companion app for managing shoots and editing workflows. Designed around a minimal, distraction-free interface.',
-    bg: '#F3F0FF',
-    accent: '#6741D9',
-  },
   {
     id: 6,
     title: 'ApeChain × Uniblock',
@@ -111,73 +77,130 @@ function HoverLabel({ title, hovered }) {
   )
 }
 
-function PhoneFrame({ bg, accent, title }) {
-  const [hovered, setHovered] = useState(false)
+function PixelMascot() {
+  const P = 4
+  const PAD = 10
+  const colors = { 1: '#2A2A2A', 2: '#8A8A8A', 3: '#C8C8C8', 4: '#FFFFFF', 5: '#E0E0E0' }
+  const grid = [
+    [0,0,1,1,1,1,1,1,1,1,0,0],
+    [0,1,3,3,3,3,3,3,3,3,1,0],
+    [1,2,3,3,3,3,3,3,3,3,2,1],
+    [1,2,3,1,1,3,3,1,1,3,2,1],
+    [1,2,3,1,4,3,3,4,1,3,2,1],
+    [1,2,3,3,3,3,3,3,3,3,2,1],
+    [0,1,3,3,3,1,1,3,3,3,1,0],
+    [0,0,1,1,1,1,1,1,1,1,0,0],
+    [0,0,0,0,1,2,2,1,0,0,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [1,2,1,2,2,2,2,2,2,1,2,1],
+    [1,2,1,2,5,5,5,5,2,1,2,1],
+    [1,2,1,2,1,2,2,1,2,1,2,1],
+    [1,2,1,2,2,2,2,2,2,1,2,1],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [0,0,0,1,1,0,0,1,1,0,0,0],
+    [0,0,0,1,1,0,0,1,1,0,0,0],
+    [0,0,1,1,1,0,0,1,1,1,0,0],
+  ]
+  const GW = 12, GH = 18
+  const svgW = GW * P + PAD * 2
+  const svgH = GH * P + PAD * 2
+  const sparks = [
+    { cx: 6, cy: 8 }, { cx: svgW - 7, cy: 4 },
+    { cx: svgW - 3, cy: 26 }, { cx: 3, cy: 34 },
+  ]
+  return (
+    <svg width={svgW} height={svgH} style={{ imageRendering: 'pixelated', overflow: 'visible' }}>
+      {grid.map((row, r) => row.map((v, c) => v ? (
+        <rect key={`${r}-${c}`} x={PAD + c * P} y={PAD + r * P} width={P} height={P} fill={colors[v]} />
+      ) : null))}
+      {sparks.map(({ cx, cy }, i) => (
+        <g key={i} fill="#BBBBBB">
+          <rect x={cx - 4} y={cy} width={9} height={1} />
+          <rect x={cx} y={cy - 4} width={1} height={9} />
+        </g>
+      ))}
+    </svg>
+  )
+}
 
+function WIPCard({ style }) {
+  const [hovered, setHovered] = useState(false)
   return (
     <div
-      style={{ position: 'relative', height: '100%', cursor: 'pointer' }}
+      style={{ ...cardBase, ...style }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <div style={{
-        height: '100%',
+        position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transform: hovered ? 'scale(1.07)' : 'scale(1)',
-        transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}>
-        <div style={{
-          width: '200px',
-          aspectRatio: '76.7 / 161.9',
-          backgroundColor: '#1D1D1F',
-          borderRadius: '32px',
-          padding: '5px',
-          boxShadow: hovered
-            ? '0 12px 32px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.10)'
-            : '0 3px 3px rgba(0,0,0,0.09), 0 8px 5px rgba(0,0,0,0.05), 0 14px 5px rgba(0,0,0,0.01)',
-          transition: 'box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          maxHeight: '460px',
-        }}>
-          <div style={{
-            width: '100%', height: '100%',
-            borderRadius: '27px',
-            border: '1px solid rgba(0,0,0,0.1)',
-            overflow: 'clip',
-            background: bg,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <div style={{ width: '60%', height: '60%', borderRadius: '12px', background: accent, opacity: 0.2 }} />
-          </div>
-        </div>
+        <PixelMascot />
       </div>
-
-      <HoverLabel title={title} hovered={hovered} />
+      <HoverLabel title="Working on it" hovered={hovered} />
     </div>
   )
 }
 
 function GridCard({ bg, accent, title, image, onClick }) {
   const [hovered, setHovered] = useState(false)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const { isTablet } = useBreakpoint()
+  const imgRef = useRef(null)
+  const target = useRef({ rx: 0, ry: 0, s: 1 })
+  const current = useRef({ rx: 0, ry: 0, s: 1 })
+  const rafRef = useRef(null)
+
+  function tick() {
+    if (!imgRef.current) { rafRef.current = null; return }
+    const t = target.current, c = current.current
+    c.rx += (t.rx - c.rx) * 0.13
+    c.ry += (t.ry - c.ry) * 0.13
+    c.s  += (t.s  - c.s)  * 0.13
+    imgRef.current.style.transform = `rotateX(${c.rx}deg) rotateY(${c.ry}deg) scale(${c.s})`
+    const done = Math.abs(t.rx - c.rx) < 0.01 && Math.abs(t.ry - c.ry) < 0.01 && Math.abs(t.s - c.s) < 0.0005
+    rafRef.current = done ? null : requestAnimationFrame(tick)
+  }
+
+  function startTick() {
+    if (!rafRef.current) rafRef.current = requestAnimationFrame(tick)
+  }
+
+  function onEnter() {
+    setHovered(true)
+    target.current.s = 1.05
+    if (imgRef.current) {
+      imgRef.current.style.boxShadow = '0 12px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)'
+      imgRef.current.style.transition = 'box-shadow 0.2s ease'
+    }
+    startTick()
+  }
 
   function onMove(e) {
     if (!image) return
     const rect = e.currentTarget.getBoundingClientRect()
-    const nx = (e.clientX - rect.left)  / rect.width  - 0.5
-    const ny = (e.clientY - rect.top)   / rect.height - 0.5
-    setTilt({ x: ny * -14, y: nx * 14 })
+    const nx = (e.clientX - rect.left) / rect.width - 0.5
+    const ny = (e.clientY - rect.top)  / rect.height - 0.5
+    target.current.rx = ny * -14
+    target.current.ry = nx * 14
+    startTick()
   }
 
   function onLeave() {
     setHovered(false)
-    setTilt({ x: 0, y: 0 })
+    target.current = { rx: 0, ry: 0, s: 1 }
+    if (imgRef.current) {
+      imgRef.current.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)'
+      imgRef.current.style.transition = 'box-shadow 0.4s ease'
+    }
+    startTick()
   }
+
+  useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }, [])
 
   return (
     <div
       style={{ ...cardBase, height: isTablet ? '300px' : '454px', cursor: 'pointer' }}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
       onClick={onClick}
@@ -190,21 +213,14 @@ function GridCard({ bg, accent, title, image, onClick }) {
           perspective: '900px',
         }}>
           <img
+            ref={imgRef}
             src={image} alt={title}
             style={{
               maxWidth: '100%', maxHeight: '100%',
               objectFit: 'contain', display: 'block',
               borderRadius: '8px',
               outline: '1px solid rgba(0,0,0,0.06)',
-              boxShadow: hovered
-                ? '0 12px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)'
-                : '0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
-              transform: hovered
-                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.05)`
-                : 'rotateX(0deg) rotateY(0deg) scale(1)',
-              transition: hovered
-                ? 'transform 0.08s linear, box-shadow 0.2s ease'
-                : 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
               willChange: 'transform',
             }}
           />
@@ -234,51 +250,96 @@ function GridCard({ bg, accent, title, image, onClick }) {
   )
 }
 
-function ProjectCardWide({ bg, accent, title }) {
-  return (
-    <div style={{ ...cardBase, height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, background: bg, position: 'relative', overflow: 'clip' }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{ width: '40%', height: '50%', borderRadius: '16px', background: accent, opacity: 0.12 }} />
-        </div>
-      </div>
-      <div style={{ padding: '24px 32px', borderTop: '1px solid #E9E9E9' }}>
-        <div style={{ fontSize: '18px', fontWeight: '500', color: '#171717', letterSpacing: '-1px' }}>{title}</div>
-      </div>
-    </div>
-  )
+
+function DotGrid({ mouseRef }) {
+  const canvasRef = useRef()
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const SPACING = 22
+    const BASE_R = 0.8
+    const HOVER_R = 2.8
+    const EFFECT_R = 90
+    const FRAME_MS = 1000 / 60
+    let raf
+    let lastDraw = 0
+
+    function resize() {
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+    resize()
+
+    const dots = []
+    function buildDots() {
+      dots.length = 0
+      const W = canvas.width, H = canvas.height
+      const ox = (W % SPACING) / 2, oy = (H % SPACING) / 2
+      for (let r = 0; r * SPACING + oy <= H + SPACING; r++)
+        for (let c = 0; c * SPACING + ox <= W + SPACING; c++)
+          dots.push({ x: ox + c * SPACING, y: oy + r * SPACING, size: BASE_R })
+    }
+    buildDots()
+
+    function draw(now) {
+      raf = requestAnimationFrame(draw)
+      if (now - lastDraw < FRAME_MS) return
+      lastDraw = now
+      const W = canvas.offsetWidth, H = canvas.offsetHeight
+      if (canvas.width !== W || canvas.height !== H) { resize(); buildDots() }
+      ctx.clearRect(0, 0, W, H)
+      const { x: mx, y: my, inside } = mouseRef.current
+      for (const d of dots) {
+        const dist = inside ? Math.hypot(d.x - mx, d.y - my) : Infinity
+        const falloff = Math.max(0, 1 - dist / EFFECT_R)
+        const target = BASE_R + (HOVER_R - BASE_R) * falloff * falloff
+        d.size += (target - d.size) * 0.12
+        ctx.beginPath()
+        ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2)
+        ctx.fillStyle = '#ebebeb'
+        ctx.fill()
+      }
+    }
+    raf = requestAnimationFrame(draw)
+    return () => cancelAnimationFrame(raf)
+  }, [mouseRef])
+
+  return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
 }
 
 function RebrandCard() {
   const navigate = useNavigate()
   const [hovered, setHovered] = useState(false)
-  const videoRef = useRef(null)
+  const { isTablet } = useBreakpoint()
+  const mouseRef = useRef({ x: -999, y: -999, inside: false })
 
   return (
     <div
-      style={{ ...cardBase, aspectRatio: '724 / 840', flex: 1, cursor: 'pointer', background: '#0a0a0a' }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      style={{ ...cardBase, aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
+      onMouseEnter={() => { setHovered(true); mouseRef.current.inside = true }}
+      onMouseLeave={() => { setHovered(false); mouseRef.current.inside = false }}
+      onMouseMove={e => {
+        const r = e.currentTarget.getBoundingClientRect()
+        mouseRef.current.x = e.clientX - r.left
+        mouseRef.current.y = e.clientY - r.top
+      }}
       onClick={() => navigate('/case-study/uniblock')}
     >
-      <video
-        ref={videoRef}
-        src="/new-site.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'top center',
-          transform: hovered ? 'scale(1.03)' : 'scale(1)',
-          transition: 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
-        }}
-      />
+      <DotGrid mouseRef={mouseRef} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
+      </div>
       <HoverLabel title="Uniblock Design" hovered={hovered} />
     </div>
   )
@@ -353,7 +414,7 @@ function Modal({ project, onClose }) {
 
 export default function Work() {
   const [activeModal, setActiveModal] = useState(null)
-  const { isTablet, width } = useBreakpoint()
+  const { isMobile, isTablet, width } = useBreakpoint()
 
   const gap = isTablet ? '16px' : '48px'
   const gridCols3 = width < 640 ? '1fr' : width < 1100 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'
@@ -371,37 +432,31 @@ export default function Work() {
         }
       `}</style>
 
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isTablet ? '16px' : '48px' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap, maxWidth: '1496px', marginInline: 'auto' }}>
 
-          {/* Row 1 — rebrand case study + phone card */}
+          {/* Row 1 — rebrand case study + wip */}
           <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
             <RebrandCard />
-            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
-              <PhoneFrame {...projects[1]} />
-            </div>
+            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
           </div>
 
-          {/* Row 2 — three grid cards, click → modal */}
+          {/* Row 2 — three wip grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            {[projects[2], projects[3], projects[4]].map((p) => (
-              <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
+            {[0, 1, 2].map(i => (
+              <WIPCard key={i} style={{ height: isTablet ? '300px' : '454px' }} />
             ))}
           </div>
 
-          {/* Row 3 — two more phone cards */}
+          {/* Row 3 — two wip cards */}
           <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
-            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
-              <PhoneFrame {...projects[3]} />
-            </div>
-            <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }}>
-              <PhoneFrame {...projects[4]} />
-            </div>
+            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
+            <WIPCard style={{ flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, aspectRatio: '724 / 840' }} />
           </div>
 
-          {/* Row 4 — three grid cards, click → modal */}
+          {/* Row 4 — three poster grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            {[projects[5], projects[6], projects[7]].map((p) => (
+            {projects.map((p) => (
               <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
             ))}
           </div>

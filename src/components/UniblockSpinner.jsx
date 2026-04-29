@@ -67,11 +67,13 @@ function makeLogoTex() {
 }
 
 const IDLE_VEL = 0.45
+const FRAME_MIN = 1 / 60
 
 function Chip({ stateRef }) {
   const groupRef = useRef()
   const borderTex = useMemo(() => makeBorderTex(), [])
   const logoTex   = useMemo(() => makeLogoTex(), [])
+  const lastFrame = useRef(0)
 
   const [chipGeo, faceMat, edgeMat] = useMemo(() => {
     const shape = makeRoundedRectShape(1.0, 1.0, CORNER_R)
@@ -85,15 +87,19 @@ function Chip({ stateRef }) {
     return [geo, face, edge]
   }, [])
 
-  useFrame((_, dt) => {
+  useFrame((state, dt) => {
+    const now = state.clock.elapsedTime
+    if (now - lastFrame.current < FRAME_MIN) return
+    lastFrame.current = now
     const s = stateRef.current
     const g = groupRef.current
     if (!g) return
+    const step = Math.min(dt, FRAME_MIN)
     if (!s.dragging) {
-      s.velY += (IDLE_VEL - s.velY) * 3.0 * dt
-      s.rotY += s.velY * dt
-      s.velX += (-s.rotX * 14 - s.velX * 9) * dt
-      s.rotX += s.velX * dt
+      s.velY += (IDLE_VEL - s.velY) * 3.0 * step
+      s.rotY += s.velY * step
+      s.velX += (-s.rotX * 14 - s.velX * 9) * step
+      s.rotX += s.velX * step
     }
     g.rotation.x = s.rotX
     g.rotation.y = s.rotY
@@ -129,7 +135,7 @@ function Chip({ stateRef }) {
   )
 }
 
-const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72 }, ref) {
+const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72, interactive = true }, ref) {
   const stateRef = useRef({
     rotX: 0, rotY: 0,
     velX: 0, velY: 9,
@@ -139,6 +145,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72 }, ref) 
   const [grabbing, setGrabbing] = useState(false)
 
   function onPointerDown(e) {
+    if (!interactive) return
     const s = stateRef.current
     e.currentTarget.setPointerCapture(e.pointerId)
     s.dragging = true
@@ -149,6 +156,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72 }, ref) 
   }
 
   function onPointerMove(e) {
+    if (!interactive) return
     const s = stateRef.current
     if (!s.dragging) return
     const now = performance.now()
@@ -166,6 +174,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72 }, ref) 
   }
 
   function onPointerUp() {
+    if (!interactive) return
     stateRef.current.dragging = false
     setGrabbing(false)
   }
@@ -173,7 +182,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72 }, ref) 
   return (
     <div ref={ref} style={{ display: 'flex', justifyContent: 'center', paddingBlock: '8px' }}>
       <div
-        style={{ width: size, height: size, cursor: grabbing ? 'grabbing' : 'grab' }}
+        style={{ width: size, height: size, cursor: interactive ? (grabbing ? 'grabbing' : 'grab') : 'default' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

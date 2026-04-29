@@ -169,7 +169,7 @@ export default function Hero() {
           border: none;
         }
       `}</style>
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isTablet ? '16px' : '48px' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: isTablet ? '16px' : '48px', maxWidth: '1496px', marginInline: 'auto' }}>
 
           {/* Left — water shader card */}
