@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
 function ChevronDown() {
@@ -27,6 +28,7 @@ const pill = {
 }
 
 export default function Navbar() {
+  const navigate = useNavigate()
   const { isTablet } = useBreakpoint()
   const pillStyle = { ...pill, fontWeight: isTablet ? '700' : '500', padding: isTablet ? '10px 14px' : '10px 20px', fontSize: isTablet ? '14px' : '16px' }
   return (
@@ -40,7 +42,7 @@ export default function Navbar() {
         paddingInline: isTablet ? '20px' : '96px',
       }}>
 
-        <div style={pillStyle}>Robert P</div>
+        <div style={pillStyle} onClick={() => navigate('/')}>Robert P</div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
           <div style={pillStyle}>Work <ChevronDown /></div>
