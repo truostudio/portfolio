@@ -193,7 +193,6 @@ export default function Hero() {
                 ...glassPill,
                 position: 'absolute', top: isTablet ? '20px' : '36px', right: isTablet ? '20px' : '36px',
                 zIndex: 1,
-                height: 48,
                 width: sliderOpen ? 240 : 48,
                 height: sliderOpen ? 84 : 48,
                 padding: sliderOpen ? '13px 24px' : '0',
