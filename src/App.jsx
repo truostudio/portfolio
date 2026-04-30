@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation, ScrollRestoration } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Work from './components/Work'
@@ -36,7 +36,6 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ScrollRestoration />
       <AnimatedRoutes />
     </BrowserRouter>
   )
