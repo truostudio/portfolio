@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, ScrollRestoration } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Work from './components/Work'
@@ -19,15 +19,25 @@ function Home() {
   )
 }
 
-export default function App() {
+function AnimatedRoutes() {
+  const location = useLocation()
   return (
-    <BrowserRouter>
-      <Routes>
+    <div key={location.pathname} style={{ animation: 'pageFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}>
+      <Routes location={location}>
         <Route path="/" element={<Home />} />
         <Route path="/case-study/uniblock" element={<CaseStudyUniblockRebrand />} />
         <Route path="/case-study/makiverse" element={<CaseStudyMakiverse />} />
         <Route path="/about" element={<About />} />
       </Routes>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ScrollRestoration />
+      <AnimatedRoutes />
     </BrowserRouter>
   )
 }
