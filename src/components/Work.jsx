@@ -4,6 +4,9 @@ import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import UniblockSpinner from './UniblockSpinner'
 import MakiverseSpinner from './MakiverseSpinner'
+import GenerateButton from './GenerateButton'
+import GrainGradientCard from './GrainGradientCard'
+import DitheringCard from './DitheringCard'
 
 const cardBase = {
   backgroundColor: '#fff',
@@ -128,7 +131,11 @@ function WIPCard({ style }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
-      style={{ ...cardBase, ...style }}
+      style={{
+        ...cardBase, ...style,
+        transform: hovered ? 'scale(1.025)' : 'scale(1)',
+        transition: hovered ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'transform 0.2s ease-out',
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -252,6 +259,45 @@ function GridCard({ bg, accent, title, image, onClick }) {
 }
 
 
+function GenerateButtonCard() {
+  const [hovered, setHovered] = useState(false)
+  const [open, setOpen] = useState(false)
+  const { isTablet } = useBreakpoint()
+
+  return (
+    <>
+      <div
+        style={{
+          ...cardBase, backgroundColor: '#ffffff',
+          height: isTablet ? '300px' : '454px', cursor: 'pointer',
+          transform: hovered ? 'scale(1.025)' : 'scale(1)',
+          transition: hovered ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'transform 0.2s ease-out',
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={() => setOpen(true)}
+      >
+        <div style={{
+          width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <GenerateButton />
+        </div>
+      </div>
+
+      {open && (
+        <Modal
+          project={{
+            title: 'Heatmap Shader',
+            body: 'A shader that pulses with the generation process. The button reacts in real time, alive before you even tap it. Shipped to production.',
+          }}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
+}
+
 function DotGrid({ mouseRef }) {
   const canvasRef = useRef()
 
@@ -310,84 +356,109 @@ function DotGrid({ mouseRef }) {
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
 }
 
+/** Updated on pointermove; scroll/resize recomputes vs rect (avoids bogus mouseenter/leave while scrolling). */
+const globalPointerClientRef = {
+  x: Number.NEGATIVE_INFINITY,
+  y: Number.NEGATIVE_INFINITY,
+}
+
+function useCaseStudyCardHover(mouseRef) {
+  const rootRef = useRef(null)
+  const [hovered, setHovered] = useState(false)
+
+  useEffect(() => {
+    const tick = (fromScroll = false) => {
+      const el = rootRef.current
+      if (!el) return
+      const { x, y } = globalPointerClientRef
+      const r = el.getBoundingClientRect()
+      const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom
+      setHovered((prev) => {
+        // scroll can only clear hover, never activate it
+        if (fromScroll && !prev && inside) return prev
+        if (inside) {
+          mouseRef.current.x = x - r.left
+          mouseRef.current.y = y - r.top
+        }
+        if (prev === inside) return prev
+        mouseRef.current.inside = inside
+        return inside
+      })
+    }
+
+    const onPointerMove = (e) => {
+      globalPointerClientRef.x = e.clientX
+      globalPointerClientRef.y = e.clientY
+      tick(false)
+    }
+    const onScrollOrResize = () => tick(true)
+
+    document.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('scroll', onScrollOrResize, true)
+    window.addEventListener('resize', onScrollOrResize)
+
+    return () => {
+      document.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('scroll', onScrollOrResize, true)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [mouseRef])
+
+  return [rootRef, hovered]
+}
+
 function RebrandCard() {
   const navigate = useNavigate()
-  const [hovered, setHovered] = useState(false)
   const { isTablet } = useBreakpoint()
   const mouseRef = useRef({ x: -999, y: -999, inside: false })
+  const [rootRef, hovered] = useCaseStudyCardHover(mouseRef)
 
   return (
     <div
-      style={{ ...cardBase, aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
-      onMouseEnter={() => { setHovered(true); mouseRef.current.inside = true }}
-      onMouseLeave={() => { setHovered(false); mouseRef.current.inside = false }}
-      onMouseMove={e => {
-        const r = e.currentTarget.getBoundingClientRect()
-        mouseRef.current.x = e.clientX - r.left
-        mouseRef.current.y = e.clientY - r.top
-      }}
+      ref={rootRef}
+      style={{ position: 'relative', aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
       onClick={() => navigate('/case-study/uniblock')}
     >
-      <DotGrid mouseRef={mouseRef} />
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none',
-      }}>
+      <div style={{ ...cardBase, position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <DotGrid mouseRef={mouseRef} />
         <div style={{
-          transform: hovered ? 'scale(1.18)' : 'scale(1)',
-          transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        }}>
-          <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
-        </div>
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
+          pointerEvents: 'none',
+        }} />
+        <HoverLabel title="Uniblock Design" hovered={hovered} />
       </div>
-      <HoverLabel title="Uniblock Design" hovered={hovered} />
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+        <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
+      </div>
     </div>
   )
 }
 
 function MakiverseCard() {
   const navigate = useNavigate()
-  const [hovered, setHovered] = useState(false)
   const { isTablet } = useBreakpoint()
   const mouseRef = useRef({ x: -999, y: -999, inside: false })
+  const [rootRef, hovered] = useCaseStudyCardHover(mouseRef)
 
   return (
     <div
-      style={{ ...cardBase, aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
-      onMouseEnter={() => { setHovered(true); mouseRef.current.inside = true }}
-      onMouseLeave={() => { setHovered(false); mouseRef.current.inside = false }}
-      onMouseMove={e => {
-        const r = e.currentTarget.getBoundingClientRect()
-        mouseRef.current.x = e.clientX - r.left
-        mouseRef.current.y = e.clientY - r.top
-      }}
+      ref={rootRef}
+      style={{ position: 'relative', aspectRatio: '724 / 840', flex: 1, cursor: 'pointer' }}
       onClick={() => navigate('/case-study/makiverse')}
     >
-      <DotGrid mouseRef={mouseRef} />
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none',
-      }}>
+      <div style={{ ...cardBase, position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <DotGrid mouseRef={mouseRef} />
         <div style={{
-          transform: hovered ? 'scale(1.18)' : 'scale(1)',
-          transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        }}>
-          <MakiverseSpinner size={isTablet ? 96 : 140} interactive={false} />
-        </div>
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
+          pointerEvents: 'none',
+        }} />
+        <HoverLabel title="Makiverse Design" hovered={hovered} />
       </div>
-      <HoverLabel title="Makiverse Design" hovered={hovered} />
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+        <MakiverseSpinner size={isTablet ? 96 : 140} interactive={false} />
+      </div>
     </div>
   )
 }
@@ -488,25 +559,17 @@ export default function Work() {
             <MakiverseCard />
           </div>
 
-          {/* Row 2 — three wip grid cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            {[0, 1, 2].map(i => (
-              <WIPCard key={i} style={{ height: isTablet ? '300px' : '454px' }} />
-            ))}
-          </div>
-
-          {/* Row 3 — three wip poster cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            {[0, 1, 2].map(i => (
-              <WIPCard key={i} style={{ height: isTablet ? '300px' : '454px' }} />
-            ))}
-          </div>
-
-          {/* Row 4 — three poster grid cards */}
+          {/* Row 2 — three poster grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
             {projects.map((p) => (
               <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
             ))}
+          </div>
+
+          {/* Row 3 — dithering (span 2) + grain gradient */}
+          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
+            <DitheringCard style={{ gridColumn: width >= 1100 ? 'span 2' : 'span 1', height: isTablet ? '300px' : '454px' }} />
+            <GrainGradientCard style={{ height: isTablet ? '300px' : '454px' }} />
           </div>
 
         </div>

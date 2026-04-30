@@ -134,6 +134,7 @@ export default function Navbar() {
 
   const workItems = [
     { label: 'Uniblock', onClick: () => navigate('/case-study/uniblock'), thumbnail: '/uniblock-logo.svg' },
+    { label: 'Makiverse', onClick: () => navigate('/case-study/makiverse'), thumbnail: '/makiverse-logo.svg' },
   ]
 
   const contactItems = [
@@ -157,7 +158,7 @@ export default function Navbar() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
           <NavPill style={pill} popover={workItems}>Work <ChevronDown /></NavPill>
-          <NavPill style={pill}>About</NavPill>
+          <NavPill style={pill} onClick={() => navigate('/about')}>About</NavPill>
           <NavPill style={pill} popover={contactItems}>Contact <ChevronDown /></NavPill>
         </div>
 

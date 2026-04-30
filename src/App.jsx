@@ -5,6 +5,7 @@ import Work from './components/Work'
 import Footer from './components/Footer'
 import CaseStudyUniblockRebrand from './pages/CaseStudyUniblockRebrand'
 import CaseStudyMakiverse from './pages/CaseStudyMakiverse'
+import About from './pages/About'
 import './index.css'
 
 function Home() {
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/case-study/uniblock" element={<CaseStudyUniblockRebrand />} />
         <Route path="/case-study/makiverse" element={<CaseStudyMakiverse />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </BrowserRouter>
   )
