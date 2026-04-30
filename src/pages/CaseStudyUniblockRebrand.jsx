@@ -5,12 +5,12 @@ import UniblockSpinner from '../components/UniblockSpinner'
 import WebsiteComparisonSlider from '../components/WebsiteComparisonSlider'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
-function Section({ children, style, isMobile }) {
+function Section({ children, style, isMobile, isTablet }) {
   return (
     <div style={{
       maxWidth: '1200px',
       marginInline: 'auto',
-      paddingInline: isMobile ? '16px' : '48px',
+      paddingInline: isMobile ? '16px' : isTablet ? '80px' : '48px',
       boxSizing: 'border-box',
       ...style,
     }}>
@@ -85,7 +85,7 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </div>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{
           backgroundColor: '#F9F9F9',
           border: '1px solid #EAEAE6',
@@ -101,7 +101,7 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '560px' }}>
           <p style={body}>
             The existing identity didn't reflect the caliber of the product. I was brought in to rebuild the company image from the ground up, starting with the visual identity.
@@ -112,7 +112,7 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: '16px' }}>
           <div style={{
             flex: 1,
@@ -135,13 +135,13 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
         <p style={{ ...body, maxWidth: '560px' }}>
           I updated every surface to reflect the new design language, from the API catalog to the pricing page.
         </p>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{
           width: '100%',
           backgroundColor: '#fff',
@@ -153,7 +153,7 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <p style={{ ...heading, maxWidth: '580px' }}>
           I built a shared component library using Claude Code, giving developers and product managers one source of truth to ship from.
         </p>
@@ -162,7 +162,7 @@ export default function CaseStudyUniblockRebrand() {
         </p>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{
           width: '100%',
           backgroundColor: '#F9F9F9',
@@ -180,7 +180,7 @@ export default function CaseStudyUniblockRebrand() {
         </div>
       </Section>
 
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <p style={{ ...heading, maxWidth: '580px' }}>
           The goal was to reduce the time a developer spends searching and get them back to building faster.
         </p>

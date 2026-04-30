@@ -207,7 +207,7 @@ function GridCard({ bg, accent, title, image, onClick }) {
 
   return (
     <div
-      style={{ ...cardBase, height: isTablet ? '300px' : '454px', cursor: 'pointer' }}
+      style={{ ...cardBase, aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px', cursor: 'pointer' }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
@@ -215,7 +215,7 @@ function GridCard({ bg, accent, title, image, onClick }) {
     >
       {image ? (
         <div style={{
-          padding: '52px', width: '100%', height: '100%',
+          padding: isTablet ? '80px' : '52px', width: '100%', height: '100%',
           boxSizing: 'border-box',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           perspective: '900px',
@@ -269,7 +269,7 @@ function GenerateButtonCard() {
       <div
         style={{
           ...cardBase, backgroundColor: '#ffffff',
-          height: isTablet ? '300px' : '454px', cursor: 'pointer',
+          aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px', cursor: 'pointer',
           transform: hovered ? 'scale(1.025)' : 'scale(1)',
           transition: hovered ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'transform 0.2s ease-out',
         }}
@@ -534,8 +534,8 @@ export default function Work() {
   const [activeModal, setActiveModal] = useState(null)
   const { isMobile, isTablet, width } = useBreakpoint()
 
-  const gap = isTablet ? '16px' : '48px'
-  const gridCols3 = width < 640 ? '1fr' : width < 1100 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'
+  const gap = isMobile ? '24px' : '48px'
+  const gridCols3 = width < 1100 ? '1fr' : 'repeat(3, 1fr)'
 
   return (
     <section style={{ paddingBlock: '24px' }}>
@@ -550,7 +550,7 @@ export default function Work() {
         }
       `}</style>
 
-      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : '48px' }}>
+      <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : isTablet ? '80px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap, maxWidth: '1496px', marginInline: 'auto' }}>
 
           {/* Row 1 — rebrand + makiverse case studies */}
@@ -568,8 +568,8 @@ export default function Work() {
 
           {/* Row 3 — dithering (span 2) + grain gradient */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            <DitheringCard style={{ gridColumn: width >= 1100 ? 'span 2' : 'span 1', height: isTablet ? '300px' : '454px' }} />
-            <GrainGradientCard style={{ height: isTablet ? '300px' : '454px' }} />
+            <DitheringCard style={{ gridColumn: width >= 1100 ? 'span 2' : 'span 1', aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
+            <GrainGradientCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
           </div>
 
         </div>

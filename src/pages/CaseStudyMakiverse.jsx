@@ -4,12 +4,12 @@ import Footer from '../components/Footer'
 import MakiverseSpinner from '../components/MakiverseSpinner'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
-function Section({ children, style, isMobile }) {
+function Section({ children, style, isMobile, isTablet }) {
   return (
     <div style={{
       maxWidth: '1200px',
       marginInline: 'auto',
-      paddingInline: isMobile ? '16px' : '48px',
+      paddingInline: isMobile ? '16px' : isTablet ? '80px' : '48px',
       boxSizing: 'border-box',
       ...style,
     }}>
@@ -102,12 +102,12 @@ export default function CaseStudyMakiverse() {
       </div>
 
       {/* 1. Agent — full-width video */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <VideoCard src="/maki-agent.mp4" style={{ borderRadius: cardRadius }} />
       </Section>
 
       {/* 1. Agent — copy */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <p style={{ ...heading, maxWidth: '580px' }}>
           The agent navigates the full platform autonomously. One prompt generates the characters, panels, and the finished manga.
         </p>
@@ -117,12 +117,12 @@ export default function CaseStudyMakiverse() {
       </Section>
 
       {/* 2. Character gen — full-width video */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <VideoCard src="/maki-character-generation.mp4" style={{ borderRadius: cardRadius }} />
       </Section>
 
       {/* 2. Character gen — copy */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <p style={{ ...body, maxWidth: '560px' }}>
           Character consistency is the hardest problem in generative AI. My job was to make that complexity invisible.
         </p>
@@ -132,19 +132,19 @@ export default function CaseStudyMakiverse() {
       </Section>
 
       {/* 3. Home page — full-width video */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <VideoCard src="/maki-home.mp4" style={{ borderRadius: cardRadius }} />
       </Section>
 
       {/* 3. Home page — copy */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', justifyContent: 'center' }}>
         <p style={{ ...body, maxWidth: '560px' }}>
           The home page sets the tone for the whole product. The goal was to make a complex platform feel immediately approachable.
         </p>
       </Section>
 
       {/* 4. Store variants — two-up */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: '16px' }}>
           <VideoCard src="/maki-store1.mp4" style={{ flex: 1, borderRadius: cardRadius }} />
           <VideoCard src="/maki-store2.mp4" style={{ flex: 1, borderRadius: cardRadius }} />
@@ -152,7 +152,7 @@ export default function CaseStudyMakiverse() {
       </Section>
 
       {/* 5. Design language — copy */}
-      <Section isMobile={isMobile} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <p style={{ ...heading, maxWidth: '580px' }}>
           One design language across the full platform, built from scratch as the sole designer.
         </p>
