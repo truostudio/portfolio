@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useBreakpoint } from '../hooks/useBreakpoint'
@@ -24,15 +23,14 @@ const previousWork = [
   { project: 'Generation Userflows', company: 'Makiverse',   date: 'July 2025'     },
   { project: 'Branding',         company: 'Pump Pals',       date: 'April 2025'    },
   { project: 'Manga Reader',     company: 'Makiverse',       date: 'May 2025'      },
-  { project: 'Content Feed',      company: 'Makiverse',       date: 'September 2024'},
+  { project: 'Content Feed',      company: 'Makiverse',       date: 'September 2025'},
   { project: 'Mobile Game',      company: 'NestEgg',         date: 'May 2024'      },
   { project: 'Web Design',       company: 'Personal Client', date: 'January 2024'  },
   { project: 'Agency Work',      company: 'dApp Technology', date: '2023 – 2025'   },
 ]
 
 export default function About() {
-  const { isMobile, isTablet, width } = useBreakpoint()
-  const navigate = useNavigate()
+  const { isMobile, isTablet } = useBreakpoint()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -70,7 +68,6 @@ export default function About() {
               <img src="/me.jpg" alt="" onLoad={() => setMe1Loaded(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: me1Loaded ? 1 : 0, transition: 'opacity 0.4s ease' }} />
             </div>
           </div>
-
 
           {/* Row 3 — double */}
           <div style={{ display: 'flex', flexDirection: isTablet ? 'column-reverse' : 'row', gap }}>
