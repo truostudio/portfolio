@@ -23,7 +23,7 @@ const previousWork = [
   { project: 'Manga Editor',     company: 'Makiverse',       date: 'September 2025'},
   { project: 'Generation Userflows', company: 'Makiverse',   date: 'July 2025'     },
   { project: 'Branding',         company: 'Pump Pals',       date: 'April 2025'    },
-  { project: 'Manga Reader',     company: 'Makiverse',       date: 'January 2025'  },
+  { project: 'Manga Reader',     company: 'Makiverse',       date: 'May 2025'      },
   { project: 'Content Feed',      company: 'Makiverse',       date: 'September 2024'},
   { project: 'Mobile Game',      company: 'NestEgg',         date: 'May 2024'      },
   { project: 'Web Design',       company: 'Personal Client', date: 'January 2024'  },
