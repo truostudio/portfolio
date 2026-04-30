@@ -182,7 +182,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72, interac
   return (
     <div ref={ref} style={{ display: 'flex', justifyContent: 'center', paddingBlock: '8px' }}>
       <div
-        style={{ width: size, height: size, cursor: interactive ? (grabbing ? 'grabbing' : 'grab') : 'default' }}
+        style={{ width: size, height: size, cursor: interactive ? (grabbing ? 'grabbing' : 'grab') : 'inherit' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

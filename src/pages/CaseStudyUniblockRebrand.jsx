@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import UniblockSpinner from '../components/UniblockSpinner'
 import WebsiteComparisonSlider from '../components/WebsiteComparisonSlider'
+import FadeVideo from '../components/FadeVideo'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
 function Section({ children, style, isMobile, isTablet }) {
@@ -121,7 +122,7 @@ export default function CaseStudyUniblockRebrand() {
             borderRadius: cardRadius,
             overflow: 'hidden',
           }}>
-            <video src="/api-list.mp4" autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }} />
+            <FadeVideo src="/api-list.mp4" />
           </div>
           <div style={{
             flex: 1,
@@ -130,7 +131,7 @@ export default function CaseStudyUniblockRebrand() {
             borderRadius: cardRadius,
             overflow: 'hidden',
           }}>
-            <video src="/pricing.mp4" autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }} />
+            <FadeVideo src="/pricing.mp4" />
           </div>
         </div>
       </Section>
@@ -149,7 +150,7 @@ export default function CaseStudyUniblockRebrand() {
           borderRadius: cardRadius,
           overflow: 'hidden',
         }}>
-          <video src="/component-library.mp4" autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }} />
+          <FadeVideo src="/component-library.mp4" />
         </div>
       </Section>
 

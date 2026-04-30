@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -41,6 +41,8 @@ export default function About() {
   }, [])
 
   const gap = isTablet ? '16px' : '48px'
+  const [me1Loaded, setMe1Loaded] = useState(false)
+  const [me2Loaded, setMe2Loaded] = useState(false)
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -65,15 +67,15 @@ export default function About() {
               </div>
             </div>
             <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, height: isTablet ? '480px' : '640px' }}>
-              <img src="/me.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img src="/me.jpg" alt="" onLoad={() => setMe1Loaded(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: me1Loaded ? 1 : 0, transition: 'opacity 0.4s ease' }} />
             </div>
           </div>
 
 
           {/* Row 3 — double */}
-          <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
+          <div style={{ display: 'flex', flexDirection: isTablet ? 'column-reverse' : 'row', gap }}>
             <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, height: isTablet ? '480px' : '640px' }}>
-              <img src="/me2.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img src="/me2.jpg" alt="" onLoad={() => setMe2Loaded(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: me2Loaded ? 1 : 0, transition: 'opacity 0.4s ease' }} />
             </div>
             <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, height: isTablet ? '480px' : '640px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: isMobile ? '32px' : '64px', boxSizing: 'border-box', width: '100%' }}>

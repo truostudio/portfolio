@@ -2,6 +2,8 @@ import { useState, useRef } from 'react'
 
 export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before', newLabel = 'After' }) {
   const [active, setActive] = useState('new')
+  const [oldLoaded, setOldLoaded] = useState(false)
+  const [newLoaded, setNewLoaded] = useState(false)
   const oldVideoRef = useRef()
   const newVideoRef = useRef()
 
@@ -74,11 +76,11 @@ export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before',
         {/* Old */}
         <div style={{
           position: 'absolute', inset: 0,
-          opacity: active === 'old' ? 1 : 0,
+          opacity: active === 'old' && oldLoaded ? 1 : 0,
           transition: 'opacity 0.5s ease',
         }}>
           {isVideo(oldSrc)
-            ? <video ref={oldVideoRef} src={oldSrc} style={mediaStyle} autoPlay loop muted playsInline />
+            ? <video ref={oldVideoRef} src={oldSrc} style={mediaStyle} autoPlay loop muted playsInline onLoadedData={() => setOldLoaded(true)} />
             : oldSrc ? <img src={oldSrc} alt={oldLabel} style={mediaStyle} /> : null
           }
         </div>
@@ -86,11 +88,11 @@ export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before',
         {/* New */}
         <div style={{
           position: 'absolute', inset: 0,
-          opacity: active === 'new' ? 1 : 0,
+          opacity: active === 'new' && newLoaded ? 1 : 0,
           transition: 'opacity 0.5s ease',
         }}>
           {isVideo(newSrc)
-            ? <video ref={newVideoRef} src={newSrc} style={mediaStyle} autoPlay loop muted playsInline />
+            ? <video ref={newVideoRef} src={newSrc} style={mediaStyle} autoPlay loop muted playsInline onLoadedData={() => setNewLoaded(true)} />
             : newSrc ? <img src={newSrc} alt={newLabel} style={mediaStyle} /> : null
           }
         </div>

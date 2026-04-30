@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import WaterShader from './WaterShader'
 import FilmGrain from './FilmGrain'
 import PhotoDither from './PhotoDither'
@@ -63,12 +64,14 @@ const glassPill = {
 
 export default function Hero() {
   const { isMobile, isTablet } = useBreakpoint()
+  const navigate = useNavigate()
   const [sparkle, setSparkle]       = useState(0.5)
   const [choppy,  setChoppy]        = useState(0.5)
   const [sliderOpen, setSliderOpen] = useState(false)
   const [slamDirs, setSlamDirs]     = useState({ Sparkle: null, Choppy: null })
   const [slamKeys, setSlamKeys]     = useState({ Sparkle: 0, Choppy: 0 })
   const [pillAnim, setPillAnim]     = useState('none')
+  const [learnAnim, setLearnAnim]   = useState('none')
   const [photoHovered, setPhotoHovered] = useState(false)
   const [photoLocked,  setPhotoLocked]  = useState(true)
   const pillRef                     = useRef(null)
@@ -292,7 +295,7 @@ export default function Hero() {
                 height: '640px', borderRadius: '48px',
                 backgroundColor: '#0a1628',
                 overflow: 'clip', position: 'relative',
-                cursor: 'pointer',
+                cursor: 'default',
               }}
               onMouseEnter={() => setPhotoHovered(true)}
               onMouseLeave={() => setPhotoHovered(false)}
@@ -307,13 +310,22 @@ export default function Hero() {
                 padding: '36px', gap: '12px',
                 zIndex: 1,
               }}>
-                <div style={{ ...glassPill, padding: '14px 28px' }}>
+                <div
+                  style={{
+                    ...glassPill,
+                    padding: '14px 28px',
+                    cursor: 'pointer',
+                    animation: learnAnim === 'in'  ? 'gelHover 0.55s ease forwards'
+                             : learnAnim === 'out' ? 'gelOut 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                             : 'none',
+                  }}
+                  onClick={() => navigate('/about')}
+                  onMouseEnter={() => setLearnAnim('in')}
+                  onMouseLeave={() => setLearnAnim('out')}
+                >
                   <span style={{ color: '#ffffff', fontSize: '16px', letterSpacing: '0.16px', whiteSpace: 'nowrap' }}>
                     Learn about me
                   </span>
-                </div>
-                <div style={{ ...glassPill, width: 48, height: 48 }}>
-                  <span style={{ color: '#ffffff', fontSize: '20px' }}>→</span>
                 </div>
               </div>
             </div>

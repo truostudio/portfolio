@@ -62,21 +62,21 @@ const projects = [
   },
 ]
 
-function HoverLabel({ title, hovered }) {
+function HoverLabel({ title, hovered, isMobile }) {
   return (
     <div style={{
       position: 'absolute',
       bottom: 28,
       left: '50%',
-      transform: hovered
+      transform: (isMobile || hovered)
         ? 'translateX(-50%) translateY(0)'
         : 'translateX(-50%) translateY(80px)',
-      opacity: hovered ? 1 : 0,
-      transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease',
+      opacity: (isMobile || hovered) ? 1 : 0,
+      transition: isMobile ? 'none' : 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease',
       zIndex: 2,
       pointerEvents: 'none',
     }}>
-      <div style={labelPill}>{title}</div>
+      <div style={{ ...labelPill, boxShadow: isMobile ? 'none' : labelPill.boxShadow }}>{title}</div>
     </div>
   )
 }
@@ -426,7 +426,7 @@ function RebrandCard() {
           background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
           pointerEvents: 'none',
         }} />
-        <HoverLabel title="Uniblock Design" hovered={hovered} />
+        <HoverLabel title="Uniblock Design" hovered={hovered} isMobile={isTablet} />
       </div>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
         <UniblockSpinner size={isTablet ? 96 : 140} interactive={false} />
@@ -454,7 +454,7 @@ function MakiverseCard() {
           background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
           pointerEvents: 'none',
         }} />
-        <HoverLabel title="Makiverse Design" hovered={hovered} />
+        <HoverLabel title="Makiverse Design" hovered={hovered} isMobile={isTablet} />
       </div>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
         <MakiverseSpinner size={isTablet ? 96 : 140} interactive={false} />

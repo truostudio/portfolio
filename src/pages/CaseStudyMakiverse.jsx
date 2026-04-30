@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import MakiverseSpinner from '../components/MakiverseSpinner'
+import FadeVideo from '../components/FadeVideo'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
 function Section({ children, style, isMobile, isTablet }) {
@@ -28,7 +29,7 @@ function VideoCard({ src, style }) {
       ...style,
     }}>
       {src
-        ? <video src={src} autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }} />
+        ? <FadeVideo src={src} />
         : <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#F3F3F3' }} />
       }
     </div>

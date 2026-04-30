@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
-import { GithubLogo, LinkedinLogo, EnvelopeSimple } from '@phosphor-icons/react'
+import { GithubLogo, LinkedinLogo, EnvelopeSimple, FileArrowDown } from '@phosphor-icons/react'
 
 function ChevronDown() {
   return (
@@ -141,6 +141,7 @@ export default function Navbar() {
     { label: 'Email', onClick: () => window.location.href = 'mailto:robert@truo.studio', icon: <EnvelopeSimple size={16} weight="fill" /> },
     { label: 'GitHub', onClick: () => window.open('https://github.com/truostudio', '_blank'), icon: <GithubLogo size={16} weight="fill" /> },
     { label: 'LinkedIn', onClick: () => window.open('https://www.linkedin.com/in/robertpham-/', '_blank'), icon: <LinkedinLogo size={16} weight="fill" /> },
+    { label: 'Resume', onClick: () => { const a = document.createElement('a'); a.href = '/Robert Pham - Product Design Resume.pdf'; a.download = 'Robert Pham - Product Design Resume.pdf'; a.click() }, icon: <FileArrowDown size={16} weight="fill" /> },
   ]
 
   return (

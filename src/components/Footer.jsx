@@ -2,7 +2,7 @@ import { MeshGradient } from '@paper-design/shaders-react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 
 export default function Footer() {
-  const { isTablet } = useBreakpoint()
+  const { isMobile, isTablet } = useBreakpoint()
   const rows = [
     { label: 'Made in', value: 'Toronto, Canada' },
     {
@@ -10,7 +10,9 @@ export default function Footer() {
         <span style={{ display: 'flex', gap: '16px' }}>
           <a href="https://github.com/truostudio" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
           <a href="https://www.linkedin.com/in/robertpham-/" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
-          <a href="mailto:robert@truo.studio" className="footer-link">robert@truo.studio</a>
+          <a href="mailto:robert@truo.studio" className="footer-link">
+            {isMobile ? 'Email' : 'robert@truo.studio'}
+          </a>
         </span>
       )
     },
