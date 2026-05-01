@@ -41,6 +41,7 @@ export default function About() {
   const gap = isTablet ? '16px' : '48px'
   const [me1Loaded, setMe1Loaded] = useState(false)
   const [me2Loaded, setMe2Loaded] = useState(false)
+  const [hoveredRow, setHoveredRow] = useState(null)
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -123,6 +124,8 @@ export default function About() {
               {previousWork.map((row, i) => (
                 <div
                   key={i}
+                  onMouseEnter={() => setHoveredRow(i)}
+                  onMouseLeave={() => setHoveredRow(null)}
                   style={{
                     display: 'grid',
                     gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
@@ -131,7 +134,7 @@ export default function About() {
                     borderTop: '1px solid #F0F0F0',
                   }}
                 >
-                  <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px' }}>
+                  <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: '500', color: hoveredRow === i ? 'rgba(0,0,0,0.4)' : '#171717', letterSpacing: '-0.5px', transition: 'color 0.05s ease' }}>
                     {row.project}
                   </span>
                   {!isMobile && (
