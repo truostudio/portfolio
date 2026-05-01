@@ -188,6 +188,9 @@ export default function CaseStudyUniblockRebrand() {
         <p style={{ ...body, maxWidth: '520px' }}>
           I redesigned the navigation, information hierarchy, and overall structure of the docs experience.
         </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          More product features and updates are in progress.
+        </p>
       </Section>
 
       <Footer />

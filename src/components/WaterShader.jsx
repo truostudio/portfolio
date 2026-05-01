@@ -22,7 +22,7 @@ const OCEAN_FRAG = `
   #define EPSILON_NRM (0.1 / u_res.x)
 
   const int   ITER_GEOMETRY = 5;
-  const int   ITER_FRAGMENT = 7;
+  const int   ITER_FRAGMENT = 6;
   const float SEA_HEIGHT    = 0.6;
   // SEA_CHOPPY driven by u_choppy uniform (slider 0→1 maps to 1→9, default 5)
   const float SEA_SPEED     = 0.96;
@@ -183,8 +183,8 @@ const STAR_FRAG = `
 
     vec3 glow = vec3(0.0);
 
-    for (int cx = -2; cx <= 2; cx++) {
-      for (int cy = -2; cy <= 2; cy++) {
+    for (int cx = -1; cx <= 1; cx++) {
+      for (int cy = -1; cy <= 1; cy++) {
         vec2 c = cell + vec2(float(cx), float(cy));
 
         // Jitter candidate within its cell
@@ -299,13 +299,15 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
     const uStarTime  = gl.getUniformLocation(starProg,  'u_time')
 
     const start = performance.now()
-    const FRAME_MS = 1000 / 60
+    const FRAME_MS = 1000 / 30
     let raf, lastFrame = 0
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width  = Math.round(canvas.offsetWidth  * dpr)
-      canvas.height = Math.round(canvas.offsetHeight * dpr)
+      const dpr = window.devicePixelRatio || 1
+      const MAX_PIXELS = 1_000_000
+      const safeDpr = Math.min(dpr, Math.sqrt(MAX_PIXELS / (canvas.offsetWidth * canvas.offsetHeight)))
+      canvas.width  = Math.round(canvas.offsetWidth  * safeDpr)
+      canvas.height = Math.round(canvas.offsetHeight * safeDpr)
       gl.viewport(0, 0, canvas.width, canvas.height)
       // Resize FBO texture to match
       gl.bindTexture(gl.TEXTURE_2D, fboTex)
@@ -346,7 +348,16 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
     }
     raf = requestAnimationFrame(render)
 
-    return () => { cancelAnimationFrame(raf); ro.disconnect() }
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf)
+      } else {
+        raf = requestAnimationFrame(render)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', onVisibility) }
   }, [])
 
   return (

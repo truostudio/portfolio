@@ -102,6 +102,21 @@ export default function CaseStudyMakiverse() {
         </div>
       </div>
 
+      {/* 0. Landing PoC — full-width video */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/Maki%20Landing%20PoC.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 0. Landing PoC — copy */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          A landing page proof of concept, built to show every feature as simply as possible.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          The goal was to make every capability land before the user had to look for it.
+        </p>
+      </Section>
+
       {/* 1. Agent — full-width video */}
       <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <VideoCard src="/maki-agent.mp4" style={{ borderRadius: cardRadius }} />
