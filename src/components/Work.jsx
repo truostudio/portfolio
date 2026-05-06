@@ -7,6 +7,7 @@ import MakiverseSpinner from './MakiverseSpinner'
 import GenerateButton from './GenerateButton'
 import GrainGradientCard from './GrainGradientCard'
 import DitheringCard from './DitheringCard'
+import JapaneseGreetingCard from './JapaneseGreetingCard'
 
 const cardBase = {
   backgroundColor: '#fff',
@@ -84,26 +85,26 @@ function HoverLabel({ title, hovered, isMobile }) {
 function PixelMascot() {
   const P = 4
   const PAD = 10
-  const colors = { 1: '#2A2A2A', 2: '#8A8A8A', 3: '#C8C8C8', 4: '#FFFFFF', 5: '#E0E0E0' }
+  const colors = { 1: '#3A3A3A', 3: '#B0B0B0', 4: '#1C1C1C', 5: '#FFFFFF', 6: '#E8A0B0' }
   const grid = [
-    [0,0,1,1,1,1,1,1,1,1,0,0],
-    [0,1,3,3,3,3,3,3,3,3,1,0],
-    [1,2,3,3,3,3,3,3,3,3,2,1],
-    [1,2,3,1,1,3,3,1,1,3,2,1],
-    [1,2,3,1,4,3,3,4,1,3,2,1],
-    [1,2,3,3,3,3,3,3,3,3,2,1],
-    [0,1,3,3,3,1,1,3,3,3,1,0],
-    [0,0,1,1,1,1,1,1,1,1,0,0],
-    [0,0,0,0,1,2,2,1,0,0,0,0],
+    [1,1,0,0,0,0,0,0,0,0,1,1],
+    [1,6,1,0,0,0,0,0,0,1,6,1],
+    [0,1,1,1,1,0,0,1,1,1,1,0],
     [0,1,1,1,1,1,1,1,1,1,1,0],
-    [1,2,1,2,2,2,2,2,2,1,2,1],
-    [1,2,1,2,5,5,5,5,2,1,2,1],
-    [1,2,1,2,1,2,2,1,2,1,2,1],
-    [1,2,1,2,2,2,2,2,2,1,2,1],
     [0,1,1,1,1,1,1,1,1,1,1,0],
-    [0,0,0,1,1,0,0,1,1,0,0,0],
-    [0,0,0,1,1,0,0,1,1,0,0,0],
-    [0,0,1,1,1,0,0,1,1,1,0,0],
+    [0,1,4,4,1,3,3,1,4,4,1,0],
+    [0,1,4,5,1,3,3,1,4,5,1,0],
+    [0,1,1,1,1,3,6,1,1,1,1,0],
+    [0,1,1,1,6,1,1,6,1,1,1,0],
+    [0,0,1,1,1,3,3,1,1,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,3,3,3,3,3,3,1,1,0],
+    [0,1,1,3,3,3,3,3,3,1,1,0],
+    [0,1,1,3,3,3,3,3,3,1,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,0,1,1,1,1,0,1,1,0],
+    [0,1,1,0,1,1,1,1,0,1,1,0],
+    [0,1,1,0,1,1,1,1,0,1,1,0],
   ]
   const GW = 12, GH = 18
   const svgW = GW * P + PAD * 2
@@ -566,10 +567,11 @@ export default function Work() {
             ))}
           </div>
 
-          {/* Row 3 — dithering (span 2) + grain gradient */}
+          {/* Row 3 — grain | Japanese greeting video | dither */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            <DitheringCard style={{ gridColumn: width >= 1100 ? 'span 2' : 'span 1', aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <GrainGradientCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
+            <JapaneseGreetingCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
+            <DitheringCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
           </div>
 
         </div>
