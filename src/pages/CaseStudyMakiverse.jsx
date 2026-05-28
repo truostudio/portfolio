@@ -132,6 +132,21 @@ export default function CaseStudyMakiverse() {
         </p>
       </Section>
 
+      {/* 1b. Action bar — full-width video */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/maki-action-bar.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 1b. Action bar — copy */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          One action bar holds the entire toolset. Simple on the surface, but loaded with everything the work demands.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          Polish turns a draft into a finished manga page, and image adjustment hands back precise cropping and resizing. Prototyped in Claude Code as a proof of concept.
+        </p>
+      </Section>
+
       {/* 2. Character gen — full-width video */}
       <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <VideoCard src="/maki-character-generation.mp4" style={{ borderRadius: cardRadius }} />

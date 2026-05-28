@@ -6,7 +6,7 @@ import UniblockSpinner from './UniblockSpinner'
 import MakiverseSpinner from './MakiverseSpinner'
 import GenerateButton from './GenerateButton'
 import GrainGradientCard from './GrainGradientCard'
-import DitheringCard from './DitheringCard'
+import ActionBarCard from './ActionBarCard'
 import JapaneseGreetingCard from './JapaneseGreetingCard'
 
 const cardBase = {
@@ -60,6 +60,33 @@ const projects = [
     image: '/poster-midnight.png',
     bg: '#EEF2FF',
     accent: '#3B5BDB',
+  },
+]
+
+const spotlightPosters = [
+  {
+    id: 9,
+    title: 'Covalent × Uniblock',
+    body: 'A Provider Spotlight piece that leans on Covalent\'s own products as quiet cues. GoldRush and Speedrun are worked into the image as subtle nods to their offerings, so the reference lands for anyone who knows their stack without ever spelling it out.',
+    image: '/poster-covalent.png',
+    bg: '#2E3B2E',
+    accent: '#22C55E',
+  },
+  {
+    id: 10,
+    title: 'Toronto Tech Week',
+    body: 'Part of a run of graphics for Toronto Tech Week, so everything needed to feel unmistakably Toronto, down to the subway platform and the partner logos hung as transit posters. The COO of Kraken joined the panel last minute, so I drafted this fast to announce it and build more hype before the doors opened.',
+    image: '/poster-toronto-tech-week.png',
+    bg: '#1C2B2B',
+    accent: '#0EA5A5',
+  },
+  {
+    id: 11,
+    title: 'Hydromancer × Uniblock',
+    body: 'A launch announcement built as a play on their name. "Hydro" pulled the whole scene underwater, the wireframe structure lit from a single source below so you sense the volume before you can fully see it.',
+    image: '/poster-hydromancer.png',
+    bg: '#0a0f14',
+    accent: '#7FB3C9',
   },
 ]
 
@@ -560,18 +587,25 @@ export default function Work() {
             <MakiverseCard />
           </div>
 
-          {/* Row 2 — three poster grid cards */}
+          {/* Row 2 — provider spotlight poster grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
-            {projects.map((p) => (
+            {spotlightPosters.map((p) => (
               <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
             ))}
           </div>
 
-          {/* Row 3 — grain | Japanese greeting video | dither */}
+          {/* Row 3 — action bar video | business cards | Japanese greeting video */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
+            <ActionBarCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <GrainGradientCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <JapaneseGreetingCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
-            <DitheringCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
+          </div>
+
+          {/* Row 4 — three poster grid cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
+            {projects.map((p) => (
+              <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
+            ))}
           </div>
 
         </div>
