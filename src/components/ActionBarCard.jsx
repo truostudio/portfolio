@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
 
 /** Increment when you replace `public/action-bar.mp4` so cached copies refresh. */
@@ -42,7 +43,7 @@ export default function ActionBarCard({ style }) {
         />
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
@@ -85,10 +86,14 @@ export default function ActionBarCard({ style }) {
               Makiverse Action Bar
             </h2>
             <p style={{ fontSize: '16px', color: 'rgba(0,0,0,0.48)', letterSpacing: '-1px', fontWeight: '500', lineHeight: 1.65, margin: 0 }}>
-              Redesigned the Makiverse action bar to feel robust without feeling heavy. One clean bar on the surface, but it adapts as you work, surfacing the right tools for whatever you&apos;re doing instead of showing you everything at once. It&apos;s also home to Polish, which runs a full pass over your draft and turns it into a real, professional-quality manga page, and Image Adjustment, which gives you fine control over cropping and resizing, all right in the flow without leaving the canvas.
+              Redesigned the Makiverse action bar to feel robust without feeling heavy. One clean bar on the surface, but it adapts as you work, surfacing the right tools for whatever you&apos;re doing instead of showing you everything at once.
+            </p>
+            <p style={{ fontSize: '16px', color: 'rgba(0,0,0,0.48)', letterSpacing: '-1px', fontWeight: '500', lineHeight: 1.65, margin: '16px 0 0' }}>
+              It&apos;s also home to Polish, which runs a full pass over your draft and turns it into a real, professional-quality manga page, and Image Adjustment, which gives you fine control over cropping and resizing, all right in the flow without leaving the canvas.
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

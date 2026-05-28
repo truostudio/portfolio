@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
 
 export default function GrainGradientCard({ style }) {
@@ -34,7 +35,7 @@ export default function GrainGradientCard({ style }) {
         />
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
@@ -80,7 +81,8 @@ export default function GrainGradientCard({ style }) {
               Designed for networking events in Japan. Met manga artists and directors.
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

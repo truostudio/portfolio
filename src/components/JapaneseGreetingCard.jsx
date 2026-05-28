@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
 
 /** Increment when you replace `public/Japanese-greeting.mp4` so cached copies refresh. */
@@ -42,7 +43,7 @@ export default function JapaneseGreetingCard({ style }) {
         />
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
@@ -88,7 +89,8 @@ export default function JapaneseGreetingCard({ style }) {
               As part of learning Japanese, I built a small personal project focused on everyday greetings and farewells.
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

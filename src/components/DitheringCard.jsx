@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Dithering } from '@paper-design/shaders-react'
 import { X } from '@phosphor-icons/react'
 
@@ -34,7 +35,7 @@ export default function DitheringCard({ style }) {
         />
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
@@ -80,7 +81,8 @@ export default function DitheringCard({ style }) {
               A 4x4 Bayer dithering shader. Rendered in real time.
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

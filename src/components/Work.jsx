@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
@@ -40,7 +41,10 @@ const projects = [
   {
     id: 6,
     title: 'ApeChain × Uniblock',
-    body: 'ApeChain has a passionate, cult-like community. The goal was to grab their attention first, then bring them into the partnership story. Visually it needed to feel like we were reaching into their world and pulling them in. Applied the dither treatment to keep it on-brand for Uniblock while matching the energy of the audience.',
+    body: [
+      'ApeChain has a passionate, cult-like community. The goal was to grab their attention first, then bring them into the partnership story. Visually it needed to feel like we were reaching into their world and pulling them in.',
+      'Applied the dither treatment to keep it on-brand for Uniblock while matching the energy of the audience.',
+    ],
     image: '/poster-apechain.png',
     bg: '#EEF2FF',
     accent: '#3B5BDB',
@@ -48,7 +52,10 @@ const projects = [
   {
     id: 7,
     title: 'Ecosystem Announcement',
-    body: 'Used Zora\'s logo as a playful double entendre. "Ecosystem" refers to Uniblock\'s position hosting and controlling endpoints across all blockchains, but their mark reads as a spherical planet, so it lives in space. Applied Uniblock\'s dither design language for consistency across the brand. Also drew on Artemis II themes given its relevancy at the time.',
+    body: [
+      'Used Zora\'s logo as a playful double entendre. "Ecosystem" refers to Uniblock\'s position hosting and controlling endpoints across all blockchains, but their mark reads as a spherical planet, so it lives in space.',
+      'Applied Uniblock\'s dither design language for consistency across the brand. Also drew on Artemis II themes given its relevancy at the time.',
+    ],
     image: '/poster-blockchains.webp',
     bg: '#0a0a12',
     accent: '#3B82F6',
@@ -56,7 +63,10 @@ const projects = [
   {
     id: 8,
     title: 'Midnight × Uniblock',
-    body: 'Placed Midnight\'s logo over a dark horse, a double entendre since the dark horse is shorthand for the underdog. Fitting given Midnight Build Club is geared toward founders and startups. Midnight\'s 3-dot logo, usually nested in a circle, is layered on top of the horse to pull focus to the center of the composition. Ties into the "We Run the Infra" headline, the feeling that we\'re about to take over.',
+    body: [
+      'Placed Midnight\'s logo over a dark horse, a double entendre since the dark horse is shorthand for the underdog. Fitting given Midnight Build Club is geared toward founders and startups.',
+      'Midnight\'s 3-dot logo, usually nested in a circle, is layered on top of the horse to pull focus to the center of the composition. Ties into the "We Run the Infra" headline, the feeling that we\'re about to take over.',
+    ],
     image: '/poster-midnight.png',
     bg: '#EEF2FF',
     accent: '#3B5BDB',
@@ -492,7 +502,7 @@ function MakiverseCard() {
 }
 
 function Modal({ project, onClose }) {
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
@@ -543,18 +553,24 @@ function Modal({ project, onClose }) {
         }}>
           {project.title}
         </h2>
-        <p style={{
-          fontSize: '16px',
-          color: 'rgba(0,0,0,0.48)',
-          letterSpacing: '-1px',
-          fontWeight: '500',
-          lineHeight: 1.65,
-          margin: 0,
-        }}>
-          {project.body}
-        </p>
+        {(Array.isArray(project.body) ? project.body : [project.body]).map((paragraph, i) => (
+          <p
+            key={i}
+            style={{
+              fontSize: '16px',
+              color: 'rgba(0,0,0,0.48)',
+              letterSpacing: '-1px',
+              fontWeight: '500',
+              lineHeight: 1.65,
+              margin: i === 0 ? 0 : '16px 0 0',
+            }}
+          >
+            {paragraph}
+          </p>
+        ))}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
