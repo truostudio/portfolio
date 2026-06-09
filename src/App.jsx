@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import CaseStudyUniblockRebrand from './pages/CaseStudyUniblockRebrand'
 import CaseStudyMakiverse from './pages/CaseStudyMakiverse'
 import About from './pages/About'
+import Services from './pages/Services'
 import './index.css'
 
 function Home() {
@@ -28,6 +29,7 @@ function AnimatedRoutes() {
         <Route path="/case-study/uniblock" element={<CaseStudyUniblockRebrand />} />
         <Route path="/case-study/makiverse" element={<CaseStudyMakiverse />} />
         <Route path="/about" element={<About />} />
+        <Route path="/services" element={<Services />} />
       </Routes>
     </div>
   )

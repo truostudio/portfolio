@@ -16,7 +16,6 @@ export default function Footer() {
         </span>
       )
     },
-    { label: 'Typeface', value: 'Geist by Vercel' },
   ]
 
   return (

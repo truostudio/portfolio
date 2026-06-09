@@ -34,7 +34,7 @@ const labelPill = {
 const rebrand = {
   id: 'rebrand',
   title: 'Uniblock Design',
-  body: 'A full brand overhaul for Uniblock. Shifted the visual identity from a heavy royal blue to a lighter, more accessible sky blue. The mark stayed the same — the color was the transformation.',
+  body: 'A full brand overhaul for Uniblock. Shifted the visual identity from a heavy royal blue to a lighter, more accessible sky blue. The mark stayed the same. The color was the transformation.',
 }
 
 const projects = [
