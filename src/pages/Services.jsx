@@ -18,7 +18,7 @@ const bundle = [
 ]
 
 const addOns = [
-  { service: 'Postcard campaign', price: '$300', note: 'Print-ready design only. You handle the mail house separately.' },
+  { service: 'Postcard campaign', price: '$300', note: 'Print-ready design, ready to hand straight to your mail house whenever you want to send.' },
   { service: 'Website draft / template', price: 'Scope-based', note: 'Depends on complexity. Full builds range from $3.5k to $20k.' },
   { service: 'Listing launch kit', price: '$500 to $600', note: 'A coordinated “Just Listed” set for one property: feature sheet, social graphics, postcard, and email announcement.' },
 ]
@@ -216,6 +216,21 @@ export default function Services() {
                 <MenuRow key={row.service} {...row} isMobile={isMobile} first={!isMobile && i === 0} />
               ))}
             </div>
+
+            <p style={{
+              margin: 0,
+              marginTop: isMobile ? '24px' : '32px',
+              paddingTop: isMobile ? '24px' : '32px',
+              borderTop: '1px solid #F0F0F0',
+              fontSize: '15px',
+              fontWeight: '500',
+              color: 'rgba(0,0,0,0.44)',
+              letterSpacing: '-0.5px',
+              lineHeight: 1.5,
+              maxWidth: '640px',
+            }}>
+              Every deliverable includes 2 minor revisions and 1 major revision. Anything beyond that is billed at an hourly rate of $40.
+            </p>
           </div>
 
         </div>
