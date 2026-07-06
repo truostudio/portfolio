@@ -13,12 +13,12 @@ const cardBase = {
 
 // Most agents start here; surfaced as the recommended bundle.
 const bundle = [
-  { service: 'One-time brand setup', price: '$400', note: 'We start with a consultation to align on your brand, then I establish the foundations on my end so every piece I produce stays true to your identity and visuals. Done once.' },
+  { service: 'One-time brand setup', price: '$300', note: 'We start with a consultation to align on your brand, then I establish the foundations on my end so every piece I produce stays true to your identity and visuals. Done once.' },
   { service: 'Monthly newsletter', price: '$300 / mo', note: 'Design and layout, with distribution handled through your preferred email platform, such as Mailchimp.' },
 ]
 
 const addOns = [
-  { service: 'Postcard campaign', price: '$300', note: 'Print-ready design, ready to hand straight to your mail house whenever you want to send.' },
+  { service: 'Postcard campaign', price: '$300', note: 'Print-ready design, delivered as final files ready to print.' },
   { service: 'Website draft / template', price: 'Scope-based', note: 'Depends on complexity. Full builds range from $3.5k to $20k.' },
   { service: 'Listing launch kit', price: '$500 to $600', note: 'A coordinated “Just Listed” set for one property: feature sheet, social graphics, postcard, and email announcement.' },
 ]
