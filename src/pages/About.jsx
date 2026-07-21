@@ -12,6 +12,11 @@ const cardBase = {
 }
 
 const previousWork = [
+  { project: 'Anime Player',     company: 'Makiverse',       date: 'July 2026'    },
+  { project: 'AI Assistant V2',  company: 'Makiverse',       date: 'July 2026'    },
+  { project: 'Generation Animation', company: 'Makiverse',   date: 'July 2026'    },
+  { project: 'Anime Editor',     company: 'Makiverse',       date: 'June 2026'    },
+  { project: 'Content Search',   company: 'Makiverse',       date: 'June 2026'    },
   { project: 'Manga Reader V2', company: 'Makiverse',       date: 'June 2026'    },
   { project: '2 Enterprise Prototypes (NDA)', company: 'Uniblock', date: 'May 2026' },
   { project: 'Toolbar',          company: 'Makiverse',       date: 'May 2026'     },

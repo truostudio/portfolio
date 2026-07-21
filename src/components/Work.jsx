@@ -9,6 +9,7 @@ import GenerateButton from './GenerateButton'
 import GrainGradientCard from './GrainGradientCard'
 import ActionBarCard from './ActionBarCard'
 import JapaneseGreetingCard from './JapaneseGreetingCard'
+import VideoCard from './VideoCard'
 
 const cardBase = {
   backgroundColor: '#fff',
@@ -97,6 +98,27 @@ const spotlightPosters = [
     image: '/poster-hydromancer.png',
     bg: '#0a0f14',
     accent: '#7FB3C9',
+  },
+]
+
+const makiverseVideos = [
+  {
+    id: 'search',
+    src: '/search.mp4',
+    title: 'Content Search',
+    body: 'A morphing search component built for Makiverse, where the library of generated work can get deep fast. It transforms into a transparent search component that follows you as you move, so finding a piece is always within reach without ever blocking the canvas.',
+  },
+  {
+    id: 'generating',
+    src: '/generating.mp4',
+    title: 'Generation Animation',
+    body: 'A generation state designed to feel playful without breaking the brand. Waiting for output is usually dead time, so the motion had to carry some of Makiverse\'s whimsy and make the process feel alive while the page comes together.',
+  },
+  {
+    id: 'flow',
+    src: '/flow.mp4',
+    title: 'AI Response Flows',
+    body: 'A flowchart mapped for the AI Assistant\'s response logic, drawn out as a clear handoff for engineering. The paths get complex once you factor in branching replies, so the diagram had to stay readable without flattening the real decision tree.',
   },
 ]
 
@@ -603,21 +625,34 @@ export default function Work() {
             <MakiverseCard />
           </div>
 
-          {/* Row 2 — provider spotlight poster grid cards */}
+          {/* Row 2 — makiverse product videos */}
+          <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
+            {makiverseVideos.map((v) => (
+              <VideoCard
+                key={v.id}
+                src={v.src}
+                title={v.title}
+                body={v.body}
+                style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }}
+              />
+            ))}
+          </div>
+
+          {/* Row 3 — provider spotlight poster grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
             {spotlightPosters.map((p) => (
               <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />
             ))}
           </div>
 
-          {/* Row 3 — action bar video | business cards | Japanese greeting video */}
+          {/* Row 4 — action bar video | business cards | Japanese greeting video */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
             <ActionBarCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <GrainGradientCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <JapaneseGreetingCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
           </div>
 
-          {/* Row 4 — three poster grid cards */}
+          {/* Row 5 — three poster grid cards */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
             {projects.map((p) => (
               <GridCard key={p.id} {...p} onClick={() => setActiveModal(p)} />

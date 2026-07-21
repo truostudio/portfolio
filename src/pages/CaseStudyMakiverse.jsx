@@ -174,6 +174,51 @@ export default function CaseStudyMakiverse() {
         </p>
       </Section>
 
+      {/* 3b. Anime Player — full-width video */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/anime-player.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 3b. Anime Player — copy */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          An anime feed built for episode browsing and playback, with simple players that auto-scroll as you watch.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          Built for ease of use. Episode handling stays simple, and the player keeps you moving through the series.
+        </p>
+      </Section>
+
+      {/* 3c. Anime Editor — full-width video */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/anime-editor.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 3c. Anime Editor — copy */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          The editor brings the AI Assistant, timeline, and file handling into one surface.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          Designed so complex production tools feel approachable.
+        </p>
+      </Section>
+
+      {/* 3d. AI Assistant — full-width video */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
+        <VideoCard src="/ai-assistant.mp4" style={{ borderRadius: cardRadius }} />
+      </Section>
+
+      {/* 3d. AI Assistant — copy */}
+      <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <p style={{ ...heading, maxWidth: '580px' }}>
+          Mentions let you rename characters, set up scenes, and steer the assistant without leaving the flow.
+        </p>
+        <p style={{ ...body, maxWidth: '520px' }}>
+          One interaction pattern that covers the moves you make most, kept light enough to feel native to the canvas.
+        </p>
+      </Section>
+
       {/* 4. Store variants — two-up */}
       <Section isMobile={isMobile} isTablet={isTablet} style={{ paddingBottom: sectionGap }}>
         <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: '16px' }}>
