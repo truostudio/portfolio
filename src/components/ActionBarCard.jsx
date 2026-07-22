@@ -4,7 +4,7 @@ import { X } from '@phosphor-icons/react'
 import FadeVideo from './FadeVideo'
 
 /** Increment when you replace `public/action-bar.mp4` so cached copies refresh. */
-const ACTION_BAR_REV = 3
+const ACTION_BAR_REV = 4
 
 export default function ActionBarCard({ style }) {
   const [hovered, setHovered] = useState(false)

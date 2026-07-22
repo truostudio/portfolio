@@ -4,7 +4,7 @@ import { X } from '@phosphor-icons/react'
 import FadeVideo from './FadeVideo'
 
 /** Increment when you replace `public/Japanese-greeting.mp4` so cached copies refresh. */
-const JAPANESE_GREETING_REV = 4
+const JAPANESE_GREETING_REV = 5
 
 export default function JapaneseGreetingCard({ style }) {
   const [hovered, setHovered] = useState(false)

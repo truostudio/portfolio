@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
 import FadeVideo from './FadeVideo'
 
-export default function VideoCard({ src, rev = 3, title, body, ariaLabel, style }) {
+export default function VideoCard({ src, rev = 4, title, body, ariaLabel, style }) {
   const [hovered, setHovered] = useState(false)
   const [open, setOpen] = useState(false)
   const paragraphs = Array.isArray(body) ? body : [body]
