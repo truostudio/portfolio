@@ -27,14 +27,14 @@ function VideoCard({ src, style }) {
   return (
     <div style={{
       width: '100%',
-      backgroundColor: '#fff',
+      backgroundColor: '#0a0a0a',
       border: '1px solid #E9E9E9',
       overflow: 'hidden',
       ...style,
     }}>
       {busted
         ? <FadeVideo src={busted} />
-        : <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#F3F3F3' }} />
+        : <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#0a0a0a' }} />
       }
     </div>
   )

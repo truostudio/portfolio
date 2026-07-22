@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "faststart": "node scripts/faststart-mp4.mjs"
+    "faststart": "node scripts/faststart-mp4.mjs",
+    "posters": "node scripts/extract-video-posters.mjs"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.76",
