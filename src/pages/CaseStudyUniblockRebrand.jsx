@@ -94,8 +94,8 @@ export default function CaseStudyUniblockRebrand() {
           padding: cardPad,
         }}>
           <WebsiteComparisonSlider
-            oldSrc="/old-site.mp4"
-            newSrc="/new-site.mp4?v=2"
+            oldSrc="/old-site.mp4?v=2"
+            newSrc="/new-site.mp4?v=3"
             oldLabel="2024"
             newLabel="2026"
           />
@@ -122,7 +122,7 @@ export default function CaseStudyUniblockRebrand() {
             borderRadius: cardRadius,
             overflow: 'hidden',
           }}>
-            <FadeVideo src="/api-list.mp4" />
+            <FadeVideo src="/api-list.mp4?v=2" />
           </div>
           <div style={{
             flex: 1,
@@ -131,7 +131,7 @@ export default function CaseStudyUniblockRebrand() {
             borderRadius: cardRadius,
             overflow: 'hidden',
           }}>
-            <FadeVideo src="/pricing.mp4" />
+            <FadeVideo src="/pricing.mp4?v=2" />
           </div>
         </div>
       </Section>
@@ -150,7 +150,7 @@ export default function CaseStudyUniblockRebrand() {
           borderRadius: cardRadius,
           overflow: 'hidden',
         }}>
-          <FadeVideo src="/component-library.mp4" />
+          <FadeVideo src="/component-library.mp4?v=2" />
         </div>
       </Section>
 
@@ -173,8 +173,8 @@ export default function CaseStudyUniblockRebrand() {
           boxSizing: 'border-box',
         }}>
           <WebsiteComparisonSlider
-            oldSrc="/beforedocsux.mp4"
-            newSrc="/newdocsux.mp4"
+            oldSrc="/beforedocsux.mp4?v=2"
+            newSrc="/newdocsux.mp4?v=2"
             oldLabel="Before"
             newLabel="After"
           />

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
+import FadeVideo from './FadeVideo'
 
 /** Increment when you replace `public/action-bar.mp4` so cached copies refresh. */
-const ACTION_BAR_REV = 1
+const ACTION_BAR_REV = 2
 
 export default function ActionBarCard({ style }) {
   const [hovered, setHovered] = useState(false)
@@ -26,20 +27,11 @@ export default function ActionBarCard({ style }) {
         onMouseLeave={() => setHovered(false)}
         onClick={() => setOpen(true)}
       >
-        <video
+        <FadeVideo
           key={ACTION_BAR_REV}
           src={`/action-bar.mp4?v=${ACTION_BAR_REV}`}
-          muted
-          loop
-          playsInline
-          autoPlay
+          objectFit="cover"
           aria-label="Mobile action bar prototype"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
         />
       </div>
 

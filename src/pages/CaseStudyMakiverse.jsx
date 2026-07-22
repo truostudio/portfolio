@@ -20,6 +20,10 @@ function Section({ children, style, isMobile, isTablet }) {
 }
 
 function VideoCard({ src, style }) {
+  const busted = src
+    ? `${src}${src.includes('?') ? '&' : '?'}v=2`
+    : src
+
   return (
     <div style={{
       width: '100%',
@@ -28,8 +32,8 @@ function VideoCard({ src, style }) {
       overflow: 'hidden',
       ...style,
     }}>
-      {src
-        ? <FadeVideo src={src} />
+      {busted
+        ? <FadeVideo src={busted} />
         : <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#F3F3F3' }} />
       }
     </div>

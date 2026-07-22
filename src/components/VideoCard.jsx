@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
+import FadeVideo from './FadeVideo'
 
-export default function VideoCard({ src, rev = 1, title, body, ariaLabel, style }) {
+export default function VideoCard({ src, rev = 2, title, body, ariaLabel, style }) {
   const [hovered, setHovered] = useState(false)
   const [open, setOpen] = useState(false)
   const paragraphs = Array.isArray(body) ? body : [body]
@@ -24,20 +25,11 @@ export default function VideoCard({ src, rev = 1, title, body, ariaLabel, style 
         onMouseLeave={() => setHovered(false)}
         onClick={() => setOpen(true)}
       >
-        <video
+        <FadeVideo
           key={rev}
           src={`${src}?v=${rev}`}
-          muted
-          loop
-          playsInline
-          autoPlay
+          objectFit="cover"
           aria-label={ariaLabel || title}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
         />
       </div>
 

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
+import FadeVideo from './FadeVideo'
 
 /** Increment when you replace `public/Japanese-greeting.mp4` so cached copies refresh. */
-const JAPANESE_GREETING_REV = 2
+const JAPANESE_GREETING_REV = 3
 
 export default function JapaneseGreetingCard({ style }) {
   const [hovered, setHovered] = useState(false)
@@ -26,20 +27,11 @@ export default function JapaneseGreetingCard({ style }) {
         onMouseLeave={() => setHovered(false)}
         onClick={() => setOpen(true)}
       >
-        <video
+        <FadeVideo
           key={JAPANESE_GREETING_REV}
           src={`/Japanese-greeting.mp4?v=${JAPANESE_GREETING_REV}`}
-          muted
-          loop
-          playsInline
-          autoPlay
+          objectFit="cover"
           aria-label="Learning Japanese video"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
         />
       </div>
 

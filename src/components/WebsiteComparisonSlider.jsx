@@ -1,18 +1,41 @@
-import { useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before', newLabel = 'After' }) {
   const [active, setActive] = useState('new')
   const [oldLoaded, setOldLoaded] = useState(false)
   const [newLoaded, setNewLoaded] = useState(false)
+  const [inView, setInView] = useState(
+    () => typeof IntersectionObserver === 'undefined',
+  )
+  const frameRef = useRef(null)
   const oldVideoRef = useRef()
   const newVideoRef = useRef()
 
+  useEffect(() => {
+    const el = frameRef.current
+    if (!el || inView) return
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '240px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [inView])
+
   function pick(key) {
     setActive(key)
-    const ref = key === 'old' ? oldVideoRef : newVideoRef
-    if (ref.current) {
-      ref.current.currentTime = 0
-      ref.current.play()
+    const next = key === 'old' ? oldVideoRef : newVideoRef
+    const prev = key === 'old' ? newVideoRef : oldVideoRef
+    prev.current?.pause()
+    if (next.current) {
+      next.current.currentTime = 0
+      next.current.play()
     }
   }
 
@@ -66,21 +89,36 @@ export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before',
       </div>
 
       {/* Media */}
-      <div style={{
-        position: 'relative',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        aspectRatio: '1200 / 776',
-        background: '#111',
-      }}>
-        {/* Old */}
+      <div
+        ref={frameRef}
+        style={{
+          position: 'relative',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          aspectRatio: '1200 / 776',
+          background: '#111',
+        }}
+      >
+        {/* Old — only attach src once near viewport; inactive stays paused to save decode */}
         <div style={{
           position: 'absolute', inset: 0,
           opacity: active === 'old' && oldLoaded ? 1 : 0,
           transition: 'opacity 0.5s ease',
         }}>
           {isVideo(oldSrc)
-            ? <video ref={oldVideoRef} src={oldSrc} style={mediaStyle} autoPlay loop muted playsInline onLoadedData={() => setOldLoaded(true)} />
+            ? (
+              <video
+                ref={oldVideoRef}
+                src={inView ? oldSrc : undefined}
+                preload={inView ? 'metadata' : 'none'}
+                style={mediaStyle}
+                autoPlay={active === 'old'}
+                loop
+                muted
+                playsInline
+                onLoadedData={() => setOldLoaded(true)}
+              />
+            )
             : oldSrc ? <img src={oldSrc} alt={oldLabel} style={mediaStyle} /> : null
           }
         </div>
@@ -92,7 +130,19 @@ export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before',
           transition: 'opacity 0.5s ease',
         }}>
           {isVideo(newSrc)
-            ? <video ref={newVideoRef} src={newSrc} style={mediaStyle} autoPlay loop muted playsInline onLoadedData={() => setNewLoaded(true)} />
+            ? (
+              <video
+                ref={newVideoRef}
+                src={inView ? newSrc : undefined}
+                preload={inView ? 'metadata' : 'none'}
+                style={mediaStyle}
+                autoPlay={active === 'new'}
+                loop
+                muted
+                playsInline
+                onLoadedData={() => setNewLoaded(true)}
+              />
+            )
             : newSrc ? <img src={newSrc} alt={newLabel} style={mediaStyle} /> : null
           }
         </div>
