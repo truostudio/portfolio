@@ -158,15 +158,15 @@ export default function WebsiteComparison({ oldSrc, newSrc, oldLabel = 'Before',
           borderRadius: '24px',
           overflow: 'hidden',
           aspectRatio: '1200 / 776',
-          background: '#0a0a0a',
+          background: '#ECECEC',
         }}
       >
         {/* Posters stay under the video so the frame is never empty */}
         {oldPoster && active === 'old' && (
-          <img src={oldPoster} alt="" aria-hidden="true" style={mediaStyle} />
+          <img src={oldPoster} alt="" aria-hidden="true" decoding="async" style={mediaStyle} />
         )}
         {newPoster && active === 'new' && (
-          <img src={newPoster} alt="" aria-hidden="true" style={mediaStyle} />
+          <img src={newPoster} alt="" aria-hidden="true" decoding="async" style={mediaStyle} />
         )}
 
         <div style={{

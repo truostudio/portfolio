@@ -7,6 +7,28 @@
   to   { opacity: 1; }
 }
 
+@keyframes videoShellShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Soft placeholder while poster/video bytes arrive — never a black void */
+.video-shell-pending::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #E8E8E8 0%,
+    #F5F5F5 45%,
+    #E8E8E8 100%
+  );
+  background-size: 200% 100%;
+  animation: videoShellShimmer 1.1s ease-in-out infinite;
+}
+
 * {
   box-sizing: border-box;
 }
