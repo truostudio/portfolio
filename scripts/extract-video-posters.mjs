@@ -23,6 +23,7 @@ const USED = [
   'beforedocsux.mp4',
   'component-library.mp4',
   'flow.mp4',
+  'floorplanner.mp4',
   'generating.mp4',
   'maki-action-bar.mp4',
   'maki-agent.mp4',

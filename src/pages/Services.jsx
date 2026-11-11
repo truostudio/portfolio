@@ -19,8 +19,8 @@ const bundle = [
 
 const addOns = [
   { service: 'Postcard campaign', price: '$300', note: 'Print-ready design, delivered as final files ready to print.' },
-  { service: 'Website draft / template', price: 'Scope-based', note: 'Depends on complexity. Full builds range from $3.5k to $20k.' },
-  { service: 'Listing launch kit', price: '$500 to $600', note: 'A coordinated “Just Listed” set for one property: feature sheet, social graphics, postcard, and email announcement.' },
+  { service: 'Website draft or template', price: 'Scoped', note: 'Depends on complexity. Full builds range from $3.5k to $20k.' },
+  { service: 'Listing launch kit', price: '$500–$600', note: 'A coordinated “Just Listed” set for one property: feature sheet, social graphics, postcard, and email announcement.' },
 ]
 
 function Check() {
@@ -62,36 +62,37 @@ function CTAButton({ label, onClick, full }) {
   )
 }
 
-function MenuRow({ service, price, note, isMobile, first }) {
-  if (isMobile) {
-    return (
-      <div style={{ paddingBlock: '16px', borderTop: first ? 'none' : '1px solid #F0F0F0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px' }}>
-          <span style={{ fontSize: '15px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px' }}>{service}</span>
-          <span style={{ fontSize: '15px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px', whiteSpace: 'nowrap' }}>{price}</span>
-        </div>
-        {note && <span style={{ fontSize: '14px', fontWeight: '500', color: 'rgba(0,0,0,0.44)', letterSpacing: '-0.5px', lineHeight: 1.5 }}>{note}</span>}
-      </div>
-    )
-  }
+const ink = '#171717'
+const mute = 'rgba(0,0,0,0.44)'
+const type = (size, color = ink) => ({ margin: 0, fontSize: size, fontWeight: '500', color, letterSpacing: size >= 20 ? '-1px' : '-0.5px', lineHeight: size >= 24 ? 1.15 : 1.5 })
+
+function Eyebrow({ children }) {
+  return <span style={{ ...type('14px', mute) }}>{children}</span>
+}
+
+function AddOnCard({ service, price, note, isMobile }) {
   return (
     <div style={{
-      display: 'grid',
-      gridTemplateColumns: '1.3fr 0.8fr 2fr',
-      alignItems: 'baseline',
-      gap: '24px',
-      paddingBlock: '20px',
-      borderTop: first ? 'none' : '1px solid #F0F0F0',
+      background: '#F7F7F7',
+      borderRadius: '32px',
+      padding: isMobile ? '24px' : '32px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px',
+      flex: 1,
+      minWidth: 0,
     }}>
-      <span style={{ fontSize: '16px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px' }}>{service}</span>
-      <span style={{ fontSize: '16px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px' }}>{price}</span>
-      <span style={{ fontSize: '16px', fontWeight: '500', color: 'rgba(0,0,0,0.44)', letterSpacing: '-0.5px', lineHeight: 1.5 }}>{note}</span>
+      <p style={type(isMobile ? '24px' : '28px')}>{price}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <p style={type('16px')}>{service}</p>
+        <p style={type('15px', mute)}>{note}</p>
+      </div>
     </div>
   )
 }
 
 export default function Services() {
-  const { isMobile } = useBreakpoint()
+  const { isMobile, isTablet } = useBreakpoint()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -133,21 +134,18 @@ export default function Services() {
             </p>
           </div>
 
-          {/* Starter bundle: recommended starting point */}
+          {/* Starter bundle: the recommended starting point */}
           <div style={{
             ...cardBase,
             boxShadow: '0 12px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)',
-            padding: isMobile ? '32px 24px' : '48px',
+            padding: isMobile ? '32px 24px' : '56px',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '28px',
+            flexDirection: isTablet ? 'column' : 'row',
+            gap: isTablet ? '32px' : '64px',
           }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '560px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flex: isTablet ? 'none' : '0 0 38%' }}>
               <span style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                letterSpacing: '-0.5px',
-                color: '#171717',
+                ...type('14px'),
                 background: '#ffffff',
                 border: '1px solid #ECECEC',
                 borderRadius: '999px',
@@ -157,80 +155,50 @@ export default function Services() {
               }}>
                 Most agents start here
               </span>
-              <p style={{ margin: 0, fontSize: isMobile ? '16px' : '18px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px', lineHeight: 1.5 }}>
-                Brand setup to get you looking sharp, plus a monthly newsletter to stay consistent. Layer on postcards and campaigns whenever a listing needs a push.
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p style={type(isMobile ? '28px' : '36px')}>Starter</p>
+                <p style={type(isMobile ? '17px' : '20px')}>$300 to set up, then $300 / mo</p>
+              </div>
+              <p style={type(isMobile ? '15px' : '16px', mute)}>
+                Look sharp from day one and stay consistent every month. Layer on postcards and campaigns whenever a listing needs a push.
               </p>
+              {!isTablet && <div style={{ marginTop: 'auto' }}><CTAButton label="Get started" full onClick={mailto('Starter bundle inquiry')} /></div>}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {bundle.map((row, i) => (
-                <div key={row.service} style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  gap: '16px',
-                  paddingBlock: '16px',
-                  borderTop: i === 0 ? 'none' : '1px solid #F0F0F0',
-                }}>
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    <Check />
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span style={{ fontSize: isMobile ? '15px' : '16px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px' }}>{row.service}</span>
-                      <span style={{ fontSize: '14px', fontWeight: '500', color: 'rgba(0,0,0,0.44)', letterSpacing: '-0.5px', lineHeight: 1.5 }}>{row.note}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, minWidth: 0 }}>
+              <Eyebrow>What's included</Eyebrow>
+              {bundle.map((row) => (
+                <div key={row.service} style={{ background: '#F7F7F7', borderRadius: '32px', padding: isMobile ? '20px 24px' : '28px 32px', display: 'flex', gap: '12px' }}>
+                  <Check />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '16px' }}>
+                      <span style={type('16px')}>{row.service}</span>
+                      <span style={{ ...type('16px'), whiteSpace: 'nowrap' }}>{row.price}</span>
                     </div>
+                    <span style={type('15px', mute)}>{row.note}</span>
                   </div>
-                  <span style={{ fontSize: isMobile ? '15px' : '16px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px', whiteSpace: 'nowrap' }}>{row.price}</span>
                 </div>
               ))}
             </div>
 
-            <CTAButton label="Get Started" full={isMobile} onClick={mailto('Starter bundle inquiry')} />
+            {isTablet && <CTAButton label="Get started" full onClick={mailto('Starter bundle inquiry')} />}
           </div>
 
-          {/* Full add-on menu */}
-          <div style={{ ...cardBase, padding: isMobile ? '32px 24px' : '52px 64px', boxSizing: 'border-box' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: isMobile ? '24px' : '32px', maxWidth: '560px' }}>
-              <p style={{ margin: 0, fontSize: '20px', fontWeight: '500', color: '#171717', letterSpacing: '-1px' }}>
-                Add anything, anytime
-              </p>
-              <p style={{ margin: 0, fontSize: '15px', fontWeight: '500', color: 'rgba(0,0,0,0.44)', letterSpacing: '-0.5px', lineHeight: 1.5 }}>
-                Everything's à la carte, no lock-in. Add or pause pieces as you go.
-              </p>
+          {/* Add-ons */}
+          <div style={{ ...cardBase, padding: isMobile ? '32px 24px' : '56px', display: 'flex', flexDirection: 'column', gap: isMobile ? '24px' : '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '560px' }}>
+              <p style={type(isMobile ? '28px' : '36px')}>Add-ons</p>
+              <p style={type(isMobile ? '15px' : '16px', mute)}>À la carte, no lock-in. Add or pause pieces as you go.</p>
             </div>
 
-            {!isMobile && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1.3fr 0.8fr 2fr',
-                gap: '24px',
-                paddingBottom: '12px',
-              }}>
-                {['Service', 'Price', 'Note'].map((h) => (
-                  <span key={h} style={{ fontSize: '13px', fontWeight: '500', color: 'rgba(0,0,0,0.4)', letterSpacing: '-0.5px' }}>{h}</span>
-                ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {addOns.map((row, i) => (
-                <MenuRow key={row.service} {...row} isMobile={isMobile} first={!isMobile && i === 0} />
-              ))}
+            <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap: isMobile ? '12px' : '16px' }}>
+              {addOns.map((row) => <AddOnCard key={row.service} {...row} isMobile={isMobile} />)}
             </div>
 
-            <p style={{
-              margin: 0,
-              marginTop: isMobile ? '24px' : '32px',
-              paddingTop: isMobile ? '24px' : '32px',
-              borderTop: '1px solid #F0F0F0',
-              fontSize: '15px',
-              fontWeight: '500',
-              color: 'rgba(0,0,0,0.44)',
-              letterSpacing: '-0.5px',
-              lineHeight: 1.5,
-              maxWidth: '640px',
-            }}>
-              Every deliverable includes 2 minor revisions and 1 major revision. Anything beyond that is billed at an hourly rate of $40.
-            </p>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '4px' : '24px', alignItems: 'baseline' }}>
+              <span style={{ ...type('15px'), flex: 'none' }}>Revisions</span>
+              <span style={type('15px', mute)}>Every deliverable includes 2 minor revisions and 1 major revision. Anything beyond that is $40 an hour.</span>
+            </div>
           </div>
 
         </div>

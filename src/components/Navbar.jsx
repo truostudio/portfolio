@@ -133,6 +133,8 @@ export default function Navbar() {
   }
 
   const workItems = [
+    { label: 'Hopscotch', onClick: () => navigate('/case-study/hopscotch'), thumbnail: '/hopscotch-logo.svg' },
+    { label: 'Hoppy', onClick: () => navigate('/case-study/hoppy'), thumbnail: '/hoppy-mark.png' },
     { label: 'Uniblock', onClick: () => navigate('/case-study/uniblock'), thumbnail: '/uniblock-logo.svg' },
     { label: 'Makiverse', onClick: () => navigate('/case-study/makiverse'), thumbnail: '/makiverse-logo.svg' },
   ]
@@ -141,7 +143,7 @@ export default function Navbar() {
     { label: 'Email', onClick: () => window.location.href = 'mailto:robert@truo.studio', icon: <EnvelopeSimple size={16} weight="fill" /> },
     { label: 'GitHub', onClick: () => window.open('https://github.com/truostudio', '_blank'), icon: <GithubLogo size={16} weight="fill" /> },
     { label: 'LinkedIn', onClick: () => window.open('https://www.linkedin.com/in/robertpham-/', '_blank'), icon: <LinkedinLogo size={16} weight="fill" /> },
-    { label: 'Resume', onClick: () => { const a = document.createElement('a'); a.href = '/Robert Pham - Product Design Resume.pdf'; a.download = 'Robert Pham - Product Design Resume.pdf'; a.click() }, icon: <FileArrowDown size={16} weight="fill" /> },
+    { label: 'Resume', onClick: () => { const a = document.createElement('a'); a.href = '/Robert Pham - Product Designer Resume.pdf'; a.download = 'Robert Pham - Product Designer Resume.pdf'; a.click() }, icon: <FileArrowDown size={16} weight="fill" /> },
   ]
 
   return (

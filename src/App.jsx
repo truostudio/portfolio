@@ -5,6 +5,8 @@ import Work from './components/Work'
 import Footer from './components/Footer'
 import CaseStudyUniblockRebrand from './pages/CaseStudyUniblockRebrand'
 import CaseStudyMakiverse from './pages/CaseStudyMakiverse'
+import CaseStudyHopscotch from './pages/CaseStudyHopscotch'
+import CaseStudyHoppy from './pages/CaseStudyHoppy'
 import About from './pages/About'
 import Services from './pages/Services'
 import './index.css'
@@ -26,6 +28,8 @@ function AnimatedRoutes() {
     <div key={location.pathname} style={{ animation: 'pageFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}>
       <Routes location={location}>
         <Route path="/" element={<Home />} />
+        <Route path="/case-study/hopscotch" element={<CaseStudyHopscotch />} />
+        <Route path="/case-study/hoppy" element={<CaseStudyHoppy />} />
         <Route path="/case-study/uniblock" element={<CaseStudyUniblockRebrand />} />
         <Route path="/case-study/makiverse" element={<CaseStudyMakiverse />} />
         <Route path="/about" element={<About />} />

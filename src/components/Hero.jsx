@@ -280,7 +280,7 @@ export default function Hero() {
                   Robert is a product designer <span style={{ whiteSpace: 'nowrap' }}>based in Toronto, Canada.</span>
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#FFABDC', fontSize: '16px', letterSpacing: '-1px', fontWeight: '500' }}>Currently at Uniblock</span>
+                  <span style={{ color: '#FFABDC', fontSize: '16px', letterSpacing: '-1px', fontWeight: '500' }}>Currently at Hopscotch</span>
                   <LocalClock />
                 </div>
               </div>

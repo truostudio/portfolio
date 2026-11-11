@@ -5,10 +5,12 @@ import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import UniblockSpinner from './UniblockSpinner'
 import MakiverseSpinner from './MakiverseSpinner'
+import HopscotchSpinner from './HopscotchSpinner'
+import HoppySpinner from './HoppySpinner'
 import GenerateButton from './GenerateButton'
 import GrainGradientCard from './GrainGradientCard'
 import ActionBarCard from './ActionBarCard'
-import JapaneseGreetingCard from './JapaneseGreetingCard'
+import FloorplannerCard from './FloorplannerCard'
 import VideoCard from './VideoCard'
 
 const cardBase = {
@@ -467,6 +469,36 @@ function useCaseStudyCardHover(mouseRef) {
   return [rootRef, hovered]
 }
 
+// A case study card: the dot grid that follows the pointer, a spinning tile,
+// and its name on hover. `to` is its page, once it has one.
+function CaseStudyCard({ title, to, Spinner }) {
+  const navigate = useNavigate()
+  const { isTablet } = useBreakpoint()
+  const mouseRef = useRef({ x: -999, y: -999, inside: false })
+  const [rootRef, hovered] = useCaseStudyCardHover(mouseRef)
+
+  return (
+    <div
+      ref={rootRef}
+      style={{ position: 'relative', aspectRatio: '724 / 840', flex: 1, cursor: to ? 'pointer' : 'default' }}
+      onClick={to ? () => navigate(to) : undefined}
+    >
+      <div style={{ ...cardBase, position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <DotGrid mouseRef={mouseRef} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at center, transparent 15%, rgba(255,255,255,0.85) 55%, #ffffff 72%)',
+          pointerEvents: 'none',
+        }} />
+        <HoverLabel title={title} hovered={hovered} isMobile={isTablet} />
+      </div>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+        <Spinner size={isTablet ? 96 : 140} interactive={false} />
+      </div>
+    </div>
+  )
+}
+
 function RebrandCard() {
   const navigate = useNavigate()
   const { isTablet } = useBreakpoint()
@@ -619,6 +651,12 @@ export default function Work() {
       <div style={{ maxWidth: '1554px', marginInline: 'auto', paddingInline: isMobile ? '16px' : isTablet ? '80px' : '48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap, maxWidth: '1496px', marginInline: 'auto' }}>
 
+          {/* Hopscotch and Hoppy case studies */}
+          <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
+            <CaseStudyCard title="Hopscotch Design" to="/case-study/hopscotch" Spinner={HopscotchSpinner} />
+            <CaseStudyCard title="Hoppy Design" to="/case-study/hoppy" Spinner={HoppySpinner} />
+          </div>
+
           {/* Row 1 — rebrand + makiverse case studies */}
           <div style={{ display: 'flex', flexDirection: isTablet ? 'column' : 'row', gap }}>
             <RebrandCard />
@@ -645,11 +683,11 @@ export default function Work() {
             ))}
           </div>
 
-          {/* Row 4 — action bar video | business cards | Japanese greeting video */}
+          {/* Row 4 — action bar video | business cards | Floorplanner video */}
           <div style={{ display: 'grid', gridTemplateColumns: gridCols3, gap }}>
             <ActionBarCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
             <GrainGradientCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
-            <JapaneseGreetingCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
+            <FloorplannerCard style={{ aspectRatio: isTablet ? '724 / 840' : undefined, height: isTablet ? undefined : '454px' }} />
           </div>
 
           {/* Row 5 — three poster grid cards */}

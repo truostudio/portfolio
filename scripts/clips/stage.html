@@ -1,0 +1,112 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style></head>
+<body><canvas id="out"></canvas>
+<script>
+// The compositor: draws a frame of the clip from a captured app frame, a camera
+// view per motion-blur sample and the cursor. compose.mjs drives it.
+const out = document.getElementById("out"), octx = out.getContext("2d", { alpha: false });
+const samp = document.createElement("canvas"), sctx = samp.getContext("2d", { alpha: false });
+let G, wall, shadow, cursors = {}, cache = new Map();
+
+const CURSORS = {
+  // macOS-style pointer: black arrow with a white edge
+  arrow: { w: 28, h: 36, hx: 4.5, hy: 3.5, svg: `<path d="M4.5 3.5v22.6l5.3-5.1 3.6 8.3 3.7-1.6-3.5-8.1h7.4z" fill="#000" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>` },
+  // the pointing hand
+  hand: { w: 30, h: 34, hx: 11.8, hy: 2.6, svg: `<path d="M9.9 4.6a1.95 1.95 0 0 1 3.9 0V13a1.9 1.9 0 0 1 3.8 0v.9a1.85 1.85 0 0 1 3.7.2v.8a1.75 1.75 0 0 1 3.5.3v6.4c0 4.4-2.6 8.1-7.3 8.1h-3.3c-2.5 0-4-1.1-5.4-3.1L4.4 20.1c-.8-1.2-.5-2.6.6-3.3 1-.6 2.2-.4 3 .5l1.9 2.3z" fill="#fff" stroke="#000" stroke-width="1.35" stroke-linejoin="round"/><path d="M13.8 13v5.2M17.6 13.9v4.6M21.3 14.9v3.8" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>` },
+  text: { w: 18, h: 30, hx: 9, hy: 15, svg: `<path d="M5.5 4.5c1.6 0 2.9.4 3.5 1.4.6-1 1.9-1.4 3.5-1.4M5.5 25.5c1.6 0 2.9-.4 3.5-1.4.6 1 1.9 1.4 3.5 1.4M9 6v18M6.8 15h4.4" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><path d="M5.5 4.5c1.6 0 2.9.4 3.5 1.4.6-1 1.9-1.4 3.5-1.4M5.5 25.5c1.6 0 2.9-.4 3.5-1.4.6 1 1.9 1.4 3.5 1.4M9 6v18M6.8 15h4.4" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>` },
+};
+CURSORS.grab = CURSORS.hand; CURSORS.grabbing = CURSORS.hand;
+
+function img(src) { return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; }); }
+
+// a soft mesh-gradient backdrop with a little grain, at 2x
+function paintWall(o) {
+  const S = 2, c = document.createElement("canvas"); c.width = G.W * S; c.height = G.H * S;
+  const x = c.getContext("2d");
+  x.fillStyle = o.base; x.fillRect(0, 0, c.width, c.height);
+  for (const b of o.blobs) {
+    const g = x.createRadialGradient(b[0] * c.width, b[1] * c.height, 0, b[0] * c.width, b[1] * c.height, b[2] * c.width);
+    g.addColorStop(0, b[3]); g.addColorStop(1, b[3].replace(/[\d.]+\)$/, "0)"));
+    x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
+  }
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+  let s = 99;
+  for (let i = 0; i < p.length; i += 4) { s = (s * 16807) % 2147483647; const nz = ((s / 2147483647) - 0.5) * (o.grain ?? 5); p[i] += nz; p[i + 1] += nz; p[i + 2] += nz; }
+  x.putImageData(d, 0, 0);
+  return c;
+}
+function paintShadow() {
+  const S = 2, m = 140, w = G.win.w, h = G.win.h, c = document.createElement("canvas");
+  c.width = (w + m * 2) * S; c.height = (h + m * 2) * S;
+  const x = c.getContext("2d"); x.scale(S, S);
+  const r = G.radius;
+  x.fillStyle = "#000";
+  x.shadowColor = `rgba(20,16,40,${G.shadow})`; x.shadowBlur = 90; x.shadowOffsetY = 34;
+  x.beginPath(); x.roundRect(m, m, w, h, r); x.fill();
+  x.shadowColor = `rgba(20,16,40,${G.shadow * 0.9})`; x.shadowBlur = 18; x.shadowOffsetY = 6;
+  x.beginPath(); x.roundRect(m, m, w, h, r); x.fill();
+  // knock the window itself out, so only the shadow is left
+  x.shadowColor = "transparent"; x.globalCompositeOperation = "destination-out";
+  x.beginPath(); x.roundRect(m + 1, m + 1, w - 2, h - 2, r); x.fill();
+  return { c, m };
+}
+
+window.setup = async (geo) => {
+  G = geo;
+  out.width = samp.width = G.W; out.height = samp.height = G.H;
+  wall = paintWall(G.wall);
+  shadow = paintShadow();
+  for (const [k, v] of Object.entries(CURSORS)) {
+    const s = 4;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${v.w * s}" height="${v.h * s}" viewBox="0 0 ${v.w} ${v.h}"><defs><filter id="f" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0.9" stdDeviation="0.9" flood-color="#000" flood-opacity=".38"/></filter></defs><g filter="url(#f)">${v.svg}</g></svg>`;
+    cursors[k] = { ...v, img: await img("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg)) };
+  }
+  return true;
+};
+
+function frameImg0(k) { return fetch(`/frames/${String(k).padStart(5, "0")}.png`).then(r => r.blob()).then(b => createImageBitmap(b)); }
+async function frameImg(k) {
+  if (!cache.has(k)) cache.set(k, fetch(`/frames/${String(k).padStart(5, "0")}.png`).then(r => r.blob()).then(b => createImageBitmap(b)));
+  for (const key of cache.keys()) if (typeof key === "number" && key < k - 1) { cache.get(key).then(b => b.close && b.close()); cache.delete(key); }
+  return cache.get(k);
+}
+
+function drawSample(ctx, app, s, ghost) {
+  const { W, H, win } = G;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+  // stage -> screen
+  ctx.setTransform(s.z, 0, 0, s.z, W / 2 - s.cx * s.z, H / 2 - s.cy * s.z);
+  ctx.drawImage(wall, 0, 0, W, H);
+  ctx.drawImage(shadow.c, win.x - shadow.m, win.y - shadow.m, win.w + shadow.m * 2, win.h + shadow.m * 2);
+  ctx.save();
+  ctx.beginPath(); ctx.roundRect(win.x, win.y, win.w, win.h, G.radius); ctx.clip();
+  ctx.drawImage(app, win.x, win.y, win.w, win.h);
+  if (ghost) { ctx.globalAlpha = ghost.a; ctx.drawImage(ghost.img, win.x, win.y, win.w, win.h); ctx.globalAlpha = 1; }
+  ctx.restore();
+  if (G.edge) { ctx.strokeStyle = G.edge; ctx.lineWidth = 1 / s.z; ctx.beginPath(); ctx.roundRect(win.x + 0.5 / s.z, win.y + 0.5 / s.z, win.w - 1 / s.z, win.h - 1 / s.z, G.radius); ctx.stroke(); }
+  // the cursor, in stage space, so it grows with the zoom
+  if (s.cursor && s.alpha > 0) {
+    const c = cursors[s.cursor] || cursors.arrow, k = G.cursorScale * (1 - 0.16 * s.press);
+    ctx.globalAlpha = s.alpha;
+    ctx.drawImage(c.img, s.x - c.hx * k, s.y - c.hy * k, c.w * k, c.h * k);
+    ctx.globalAlpha = 1;
+  }
+}
+
+// draw output frame: the app frame k, under each camera sample, averaged
+window.draw = async (k, samples, cut) => {
+  const app = await frameImg(k);
+  let ghost = null;
+  if (cut) { const img = await (cache.get("g" + cut.k) || (cache.set("g" + cut.k, frameImg0(cut.k)), cache.get("g" + cut.k))); ghost = { img, a: cut.a }; }
+  frameImg(k + 1).catch(() => {});
+  if (samples.length === 1) { drawSample(octx, app, samples[0], ghost); return; }
+  for (let i = 0; i < samples.length; i++) {
+    drawSample(sctx, app, samples[i], ghost);
+    octx.setTransform(1, 0, 0, 1, 0, 0);
+    octx.globalAlpha = 1 / (i + 1);
+    octx.drawImage(samp, 0, 0);
+  }
+  octx.globalAlpha = 1;
+};
+</script></body></html>
