@@ -1,8 +1,14 @@
 import { MeshGradient } from '@paper-design/shaders-react'
+import { useRef } from 'react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
+import { useInView } from '../hooks/useInView'
 
 export default function Footer() {
   const { isMobile, isTablet } = useBreakpoint()
+  // The gradient moves only while it's on screen (paused, it resumes from
+  // the same frame)
+  const gradRef = useRef(null)
+  const live = useInView(gradRef)
   const rows = [
     { label: 'Made in', value: 'Toronto, Canada' },
     {
@@ -42,7 +48,7 @@ export default function Footer() {
           gap: '48px',
         }}>
           {/* Big name / headline area */}
-          <div style={{
+          <div ref={gradRef} style={{
             borderRadius: '24px',
             height: isTablet ? '180px' : '320px',
             overflow: 'hidden',
@@ -58,7 +64,7 @@ export default function Footer() {
               swirl={0.06}
               grainMixer={0.1}
               grainOverlay={0.27}
-              speed={1.72}
+              speed={live ? 1.72 : 0}
               scale={1.12}
               offsetX={-0.24}
             />

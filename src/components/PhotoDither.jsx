@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { watchInView } from '../hooks/useInView'
 
 const VERT = `
 attribute vec2 a_pos;
@@ -130,7 +131,7 @@ export default function PhotoDither({ hovered, locked, src }) {
   const uEnterTRef     = useRef(null)
   const uLockedRef     = useRef(null)
   const imgAspectRef   = useRef(1.0)
-  const stateRef       = useRef({ hover: 0, target: 0, raf: null, hoverAt: -Infinity, ready: false })
+  const stateRef       = useRef({ hover: 0, target: 0, raf: null, hoverAt: -Infinity, ready: false, dirty: true })
   const lockedRef      = useRef(locked)
   const mouseRef       = useRef({ x: -9999, y: -9999 })
 
@@ -139,7 +140,7 @@ export default function PhotoDither({ hovered, locked, src }) {
     stateRef.current.target = hovered ? 1 : 0
   }, [hovered])
 
-  useEffect(() => { lockedRef.current = locked }, [locked])
+  useEffect(() => { lockedRef.current = locked; stateRef.current.dirty = true }, [locked])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -185,11 +186,18 @@ export default function PhotoDither({ hovered, locked, src }) {
         canvas.width  = w
         canvas.height = h
         gl.viewport(0, 0, w, h)
+        st.dirty = true
       }
     }
 
     function frame() {
+      st.raf = requestAnimationFrame(frame)
       resize()
+      // At rest (not hovered, the reveal settled, its flash long gone) the
+      // picture can't change, so the last frame drawn stays up as it is
+      const resting = st.target === 0 && st.hover === 0 && performance.now() - st.hoverAt > 2000
+      if (resting && !st.dirty) return
+      st.dirty = false
       const dpr = window.devicePixelRatio || 1
       st.hover += (st.target - st.hover) * 0.1
       if (Math.abs(st.target - st.hover) < 0.002) st.hover = st.target
@@ -212,12 +220,22 @@ export default function PhotoDither({ hovered, locked, src }) {
         st.ready = true
         requestAnimationFrame(() => { if (canvasRef.current) canvasRef.current.style.opacity = '1' })
       }
-      st.raf = requestAnimationFrame(frame)
     }
 
-    frame()
+    // Only while it's on screen and the tab is showing
+    let onScreen = true
+    const sync = () => {
+      cancelAnimationFrame(st.raf)
+      st.raf = null
+      if (onScreen && !document.hidden) frame()
+    }
+    sync()
+    const unwatch = watchInView(canvas, (v) => { onScreen = v; sync() })
+    document.addEventListener('visibilitychange', sync)
 
     return () => {
+      unwatch()
+      document.removeEventListener('visibilitychange', sync)
       cancelAnimationFrame(st.raf)
       if (texRef.current) gl.deleteTexture(texRef.current)
       gl.deleteProgram(prog)
@@ -237,6 +255,7 @@ export default function PhotoDither({ hovered, locked, src }) {
       texRef.current = uploadTex(gl, img)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, texRef.current)
+      stateRef.current.dirty = true
     }
     img.src = src
     return () => { cancelled = true }

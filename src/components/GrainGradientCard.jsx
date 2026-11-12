@@ -26,6 +26,8 @@ export default function GrainGradientCard({ style }) {
         <img
           src="/business-cards.webp"
           alt="Business Cards"
+          loading="lazy"
+          decoding="async"
           style={{
             width: '100%',
             height: '100%',

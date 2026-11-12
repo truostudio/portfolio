@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { watchInView } from '../hooks/useInView'
 
 // "Seascape" by Alexander Alekseev aka TDM - 2014
 // License: CC BY-NC-SA 3.0  https://www.shadertoy.com/view/Ms2SD1
@@ -346,18 +347,18 @@ export default function WaterShader({ sparkle = 0.5, choppy = 0.5 }) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
 
     }
-    raf = requestAnimationFrame(render)
-
-    const onVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(raf)
-      } else {
-        raf = requestAnimationFrame(render)
-      }
+    // Render only while the card is on screen and the tab is showing
+    let onScreen = true
+    const sync = () => {
+      cancelAnimationFrame(raf)
+      raf = null
+      if (onScreen && !document.hidden) raf = requestAnimationFrame(render)
     }
-    document.addEventListener('visibilitychange', onVisibility)
+    sync()
+    const unwatch = watchInView(canvas, (v) => { onScreen = v; sync() })
+    document.addEventListener('visibilitychange', sync)
 
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', onVisibility) }
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); unwatch(); document.removeEventListener('visibilitychange', sync) }
   }, [])
 
   return (

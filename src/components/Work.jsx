@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { X } from '@phosphor-icons/react'
 import { useBreakpoint } from '../hooks/useBreakpoint'
+import { watchInView } from '../hooks/useInView'
 import UniblockSpinner from './UniblockSpinner'
 import MakiverseSpinner from './MakiverseSpinner'
 import HopscotchSpinner from './HopscotchSpinner'
@@ -70,7 +71,7 @@ const projects = [
       'Placed Midnight\'s logo over a dark horse, a double entendre since the dark horse is shorthand for the underdog. Fitting given Midnight Build Club is geared toward founders and startups.',
       'Midnight\'s 3-dot logo, usually nested in a circle, is layered on top of the horse to pull focus to the center of the composition. Ties into the "We Run the Infra" headline, the feeling that we\'re about to take over.',
     ],
-    image: '/poster-midnight.png',
+    image: '/poster-midnight.webp',
     bg: '#EEF2FF',
     accent: '#3B5BDB',
   },
@@ -285,6 +286,8 @@ function GridCard({ bg, accent, title, image, onClick }) {
           <img
             ref={imgRef}
             src={image} alt={title}
+            loading="lazy"
+            decoding="async"
             style={{
               maxWidth: '100%', maxHeight: '100%',
               objectFit: 'contain', display: 'block',
@@ -374,6 +377,9 @@ function DotGrid({ mouseRef }) {
     const FRAME_MS = 1000 / 60
     let raf
     let lastDraw = 0
+    // Every dot back at its resting size and the pointer away: nothing moves,
+    // so the drawing stays as it is until the pointer comes back
+    let settled = false
 
     function resize() {
       canvas.width = canvas.offsetWidth
@@ -397,22 +403,36 @@ function DotGrid({ mouseRef }) {
       if (now - lastDraw < FRAME_MS) return
       lastDraw = now
       const W = canvas.offsetWidth, H = canvas.offsetHeight
-      if (canvas.width !== W || canvas.height !== H) { resize(); buildDots() }
-      ctx.clearRect(0, 0, W, H)
       const { x: mx, y: my, inside } = mouseRef.current
+      if (canvas.width !== W || canvas.height !== H) { resize(); buildDots(); settled = false }
+      if (settled && !inside) return
+      ctx.clearRect(0, 0, W, H)
+      let moving = inside
       for (const d of dots) {
         const dist = inside ? Math.hypot(d.x - mx, d.y - my) : Infinity
         const falloff = Math.max(0, 1 - dist / EFFECT_R)
         const target = BASE_R + (HOVER_R - BASE_R) * falloff * falloff
         d.size += (target - d.size) * 0.12
+        if (Math.abs(target - d.size) > 1e-4) moving = true
         ctx.beginPath()
         ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2)
         ctx.fillStyle = '#ebebeb'
         ctx.fill()
       }
+      settled = !moving
     }
-    raf = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(raf)
+
+    // Only while the card is on screen and the tab is showing
+    let onScreen = true
+    const sync = () => {
+      cancelAnimationFrame(raf)
+      raf = null
+      if (onScreen && !document.hidden) raf = requestAnimationFrame(draw)
+    }
+    sync()
+    const unwatch = watchInView(canvas, (v) => { onScreen = v; sync() })
+    document.addEventListener('visibilitychange', sync)
+    return () => { cancelAnimationFrame(raf); unwatch(); document.removeEventListener('visibilitychange', sync) }
   }, [mouseRef])
 
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />

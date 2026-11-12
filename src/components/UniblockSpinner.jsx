@@ -1,6 +1,8 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useRef, useMemo, useState, forwardRef } from 'react'
 import * as THREE from 'three'
+import { useInView } from '../hooks/useInView'
+import WakeOnShow from './WakeOnShow'
 
 const MARK_PATHS = [
   "M35.6204 67.0001C35.0167 67.0001 34.3123 66.8995 33.8092 66.5976L2.2137 50.1958C0.804982 49.4914 0 48.0826 0 46.6739V12.4615C0 10.2478 1.81121 8.43652 4.02491 8.43652C6.23861 8.43652 8.04982 10.2478 8.04982 12.4615V44.2589L35.6204 58.5476L63.1911 44.2589V12.4615C63.1911 10.2478 65.0023 8.43652 67.216 8.43652C69.4297 8.43652 71.2409 10.2478 71.2409 12.4615V46.6739C71.2409 48.1833 70.4359 49.592 69.0272 50.2964L37.4317 66.5976C36.9285 66.8995 36.2242 67.0001 35.6204 67.0001Z",
@@ -89,6 +91,8 @@ function Chip({ stateRef }) {
 
   useFrame((state, dt) => {
     const now = state.clock.elapsedTime
+    // The clock starts again from 0 when the tile comes back on screen
+    if (now < lastFrame.current) lastFrame.current = now - FRAME_MIN
     if (now - lastFrame.current < FRAME_MIN) return
     lastFrame.current = now
     const s = stateRef.current
@@ -143,6 +147,9 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72, interac
     lastX: 0, lastY: 0, lastTime: 0,
   })
   const [grabbing, setGrabbing] = useState(false)
+  // Each tile is a WebGL scene of its own: it renders only while on screen
+  const boxRef = useRef(null)
+  const live = useInView(boxRef)
 
   function onPointerDown(e) {
     if (!interactive) return
@@ -182,12 +189,14 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72, interac
   return (
     <div ref={ref} style={{ display: 'flex', justifyContent: 'center', paddingBlock: '8px' }}>
       <div
+        ref={boxRef}
         style={{ width: size, height: size, cursor: interactive ? (grabbing ? 'grabbing' : 'grab') : 'inherit' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
         <Canvas
+          frameloop={live ? 'always' : 'never'}
           flat
           gl={{ alpha: true, antialias: true }}
           camera={{ position: [0, 0, 2.2], fov: 38 }}
@@ -196,6 +205,7 @@ const UniblockSpinner = forwardRef(function UniblockSpinner({ size = 72, interac
           <directionalLight position={[2, 4, 4]} intensity={1.4} />
           <directionalLight position={[-2, -1, 2]} intensity={0.2} color="#ddeeff" />
           <ambientLight intensity={1.0} />
+          <WakeOnShow live={live} />
           <Chip stateRef={stateRef} />
         </Canvas>
       </div>

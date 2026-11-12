@@ -1,6 +1,8 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useRef, useMemo, useState, forwardRef } from 'react'
 import * as THREE from 'three'
+import { useInView } from '../hooks/useInView'
+import WakeOnShow from './WakeOnShow'
 
 const SVG_SIZE = 618
 
@@ -105,6 +107,8 @@ function Chip({ stateRef }) {
 
   useFrame((state, dt) => {
     const now = state.clock.elapsedTime
+    // The clock starts again from 0 when the tile comes back on screen
+    if (now < lastFrame.current) lastFrame.current = now - FRAME_MIN
     if (now - lastFrame.current < FRAME_MIN) return
     lastFrame.current = now
     const s = stateRef.current
@@ -159,6 +163,9 @@ const MakiverseSpinner = forwardRef(function MakiverseSpinner({ size = 72, inter
     lastX: 0, lastY: 0, lastTime: 0,
   })
   const [grabbing, setGrabbing] = useState(false)
+  // Each tile is a WebGL scene of its own: it renders only while on screen
+  const boxRef = useRef(null)
+  const live = useInView(boxRef)
 
   function onPointerDown(e) {
     if (!interactive) return
@@ -198,12 +205,14 @@ const MakiverseSpinner = forwardRef(function MakiverseSpinner({ size = 72, inter
   return (
     <div ref={ref} style={{ display: 'flex', justifyContent: 'center', paddingBlock: '8px' }}>
       <div
+        ref={boxRef}
         style={{ width: size, height: size, cursor: interactive ? (grabbing ? 'grabbing' : 'grab') : 'inherit' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
         <Canvas
+          frameloop={live ? 'always' : 'never'}
           flat
           gl={{ alpha: true, antialias: true }}
           camera={{ position: [0, 0, 2.2], fov: 38 }}
@@ -212,6 +221,7 @@ const MakiverseSpinner = forwardRef(function MakiverseSpinner({ size = 72, inter
           <directionalLight position={[2, 4, 4]} intensity={1.4} />
           <directionalLight position={[-2, -1, 2]} intensity={0.2} color="#ddeeff" />
           <ambientLight intensity={1.0} />
+          <WakeOnShow live={live} />
           <Chip stateRef={stateRef} />
         </Canvas>
       </div>

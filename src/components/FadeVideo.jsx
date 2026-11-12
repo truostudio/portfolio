@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { acquireVideoSlot } from '../lib/videoLoadQueue'
 import { posterForVideo } from '../lib/videoPoster'
+import { watchInView } from '../hooks/useInView'
 
 /**
  * Autoplaying muted loop that:
@@ -20,6 +21,8 @@ export default function FadeVideo({
   const videoRef = useRef(null)
   const releaseRef = useRef(null)
   const readyRef = useRef(false)
+  // On screen (with a margin): a loop decodes only while it could be seen
+  const showingRef = useRef(true)
   const [inView, setInView] = useState(
     () => typeof IntersectionObserver === 'undefined',
   )
@@ -75,6 +78,7 @@ export default function FadeVideo({
     if (!video) return undefined
 
     const tryPlay = () => {
+      if (!showingRef.current) return
       const playPromise = video.play()
       if (playPromise?.catch) playPromise.catch(() => {})
     }
@@ -86,6 +90,23 @@ export default function FadeVideo({
       video.removeEventListener('loadeddata', tryPlay)
       video.removeEventListener('canplay', tryPlay)
     }
+  }, [active, src])
+
+  // Pause the loop once it's scrolled well away, and carry on as it comes back
+  useEffect(() => {
+    if (!active) return undefined
+    const video = videoRef.current
+    const el = wrapRef.current
+    if (!video || !el) return undefined
+    return watchInView(el, (showing) => {
+      showingRef.current = showing
+      if (showing) {
+        const p = video.play()
+        if (p?.catch) p.catch(() => {})
+      } else {
+        video.pause()
+      }
+    }, '200px')
   }, [active, src])
 
   function releaseSlot() {

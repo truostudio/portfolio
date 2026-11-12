@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { watchInView } from '../hooks/useInView'
 
 export default function FilmGrain({ fps = 12, opacity = 0.04 }){
   const canvasRef = useRef(null)
@@ -9,12 +10,15 @@ export default function FilmGrain({ fps = 12, opacity = 0.04 }){
     let raf
     let lastTime = 0
     const interval = 1000 / fps
+    // One pixel buffer, refilled each frame (a new one per frame was garbage)
+    let imageData = null
 
     const resize = () => {
       // 1/3 resolution — each grain particle covers ~3×3 screen pixels,
       // giving that chunky analogue silver-halide look.
       canvas.width  = Math.round(canvas.offsetWidth  / 2)
       canvas.height = Math.round(canvas.offsetHeight / 2)
+      imageData = null
     }
 
     const render = (time) => {
@@ -23,7 +27,8 @@ export default function FilmGrain({ fps = 12, opacity = 0.04 }){
       lastTime = time
 
       const { width, height } = canvas
-      const imageData = ctx.createImageData(width, height)
+      if (!width || !height) return
+      if (!imageData) imageData = ctx.createImageData(width, height)
       const data = imageData.data
       for (let i = 0; i < data.length; i += 4) {
         const r = Math.random()
@@ -43,9 +48,19 @@ export default function FilmGrain({ fps = 12, opacity = 0.04 }){
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
     resize()
-    raf = requestAnimationFrame(render)
 
-    return () => { cancelAnimationFrame(raf); ro.disconnect() }
+    // Grain only while it's on screen and the tab is showing
+    let onScreen = true
+    const sync = () => {
+      cancelAnimationFrame(raf)
+      raf = null
+      if (onScreen && !document.hidden) raf = requestAnimationFrame(render)
+    }
+    sync()
+    const unwatch = watchInView(canvas, (v) => { onScreen = v; sync() })
+    document.addEventListener('visibilitychange', sync)
+
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); unwatch(); document.removeEventListener('visibilitychange', sync) }
   }, [fps])
 
   return (
