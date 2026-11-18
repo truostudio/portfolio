@@ -7,7 +7,7 @@ const sections = [
   {
     src: '/hopscotch-usage.mp4',
     lead: 'One dashboard for every model a team calls. Spend, speed and failures across every request, at a glance.',
-    body: 'Designed end to end from the first concept, as the founding designer.',
+    body: 'Designed end to end from the first concept, as the founding product designer.',
   },
   {
     src: '/hopscotch-routing.mp4',

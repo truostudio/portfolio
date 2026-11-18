@@ -67,7 +67,7 @@ export default function About() {
             <div style={{ ...cardBase, flex: isTablet ? 'none' : 1, width: isTablet ? '100%' : undefined, height: isTablet ? '480px' : '640px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: isMobile ? '32px' : '64px', boxSizing: 'border-box', width: '100%' }}>
                 <p style={{ margin: 0, fontSize: isMobile ? '15px' : '17px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px', lineHeight: 1.6 }}>
-                  Currently I'm the founding designer at Hopscotch, and I design at Makiverse. Previously, I worked at Uniblock and with a design agency, and had a professional esports career in VALORANT with Immortals, Complexity, and FaZe Clan.
+                  Currently I'm the Founding Product Designer at Hopscotch, and I design at Makiverse. Previously, I worked at Uniblock and with a design agency, and had a professional esports career in VALORANT with Immortals, Complexity, and FaZe Clan.
                 </p>
                 <p style={{ margin: 0, fontSize: isMobile ? '15px' : '17px', fontWeight: '500', color: '#171717', letterSpacing: '-0.5px', lineHeight: 1.6 }}>
                   Design has always been how I think. I care about craft and getting something right visually, functionally, and in every detail in between.
